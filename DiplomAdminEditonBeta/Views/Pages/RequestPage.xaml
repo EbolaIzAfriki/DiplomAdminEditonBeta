@@ -38,14 +38,15 @@
         <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id,  UpdateSourceTrigger=PropertyChanged}" Width="0.5*" IsReadOnly ="True"/>
                 <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name,  UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Width="*"/>
-                <DataGridTextColumn Header="Перевозчик" Binding="{Binding Carrier.Name,  UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"  Width="1.2*"/>
-                <DataGridTemplateColumn Header="Клиенты" IsReadOnly="True" Width="*">
+                <DataGridTextColumn Header="Перевозчик" Binding="{Binding Carrier.Name,  UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"  Width="*"/>
+                <DataGridTemplateColumn Header="Клиенты" IsReadOnly="True" Width="1.2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Clients,  UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource TextBlockStyle}" Foreground="Black" LineStackingStrategy="BlockLineHeight" LineHeight="20" FontSize="14" TextWrapping="Wrap"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Создатель" Binding="{Binding User.Login,  UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"  Width="0.7*"/>
                 <DataGridTemplateColumn  Width="0.5*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

@@ -38,7 +38,7 @@ namespace DiplomAdminEditonBeta
         public void UpdateTaskList()
         {
             ClientsDataGrid.ItemsSource = null;
-            ClientsDataGrid.ItemsSource = DiplomBetaDBEntities.GetContext().Task.Where(p => p.UserId == MainForm.CurrentUser.Id || p.UserId == null).ToList();
+            ClientsDataGrid.ItemsSource = DiplomBetaDBEntities.GetContext().Task.ToList();
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)

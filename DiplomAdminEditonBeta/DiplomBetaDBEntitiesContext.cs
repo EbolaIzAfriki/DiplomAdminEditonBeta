@@ -50,9 +50,16 @@ namespace DiplomAdminEditonBeta
             {
                 List<string> vs = Point.Select(p => p.Client).Select(p => p.CompanyName).Distinct().ToList();
                 string s = "";
+                bool first = true;
                 foreach(string r in vs)
                 {
-                    s += r + " ";
+                    if (first)
+                    {
+                        first = false;
+                        s = r;
+                        continue;
+                    }
+                    s += "\n" + r;
                 }
                 return s;
             }
