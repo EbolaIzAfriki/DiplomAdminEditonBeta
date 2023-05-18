@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:DiplomAdminEditonBeta"
         mc:Ignorable="d"
         Title="Авторизация" MinHeight="450" MinWidth="800" Height="450" Width="800" ResizeMode="NoResize">
-    <Grid>
+    <Grid Background="#FF2FA0FD">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="1.4*"/>
@@ -14,36 +14,38 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition Height="1.4*"/>
+            <RowDefinition Height="1.6*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="3*"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <StackPanel  VerticalAlignment="Center">
-                <TextBlock Text="Логин:"  Style="{StaticResource TextBlockStyle}"/>
-                <TextBox x:Name="LoginTB" Style="{StaticResource RoundedTextBox}"/>
-                <TextBlock Text="Пароль:" Style="{StaticResource TextBlockStyle}" />
-                <PasswordBox x:Name="PasswordTB"  Margin="5" FontFamily="Fonts/golos-ui_regular.ttf #Golos UI" FontSize="16">
-                    <PasswordBox.Template>
-                        <ControlTemplate  TargetType="{x:Type PasswordBox}">
-                            <Border Background="{TemplateBinding Background}" x:Name="Bd" BorderBrush="#FFABADB3" BorderThickness="1" CornerRadius="5">
-                                <ScrollViewer Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-                            </Border>
-                        </ControlTemplate>
-                    </PasswordBox.Template>
-                </PasswordBox>
-            </StackPanel>
-            <Grid Grid.Row="1">
-                <Button Content="Войти" Margin="10 5 200 5"  Name="EntryButton" Background="#FF0068FF"/>
-                <TextBlock  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" Name="ForgetPasswordTB" Style="{StaticResource TextBlockStyle}">
+        <Grid Grid.Row="1" Grid.Column="1" >
+            <Border  Background="#FF89CAFF" CornerRadius="20">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel  VerticalAlignment="Center">
+                        <TextBlock Text="Логин:"  Style="{StaticResource TextBlockStyle}"/>
+                        <TextBox x:Name="LoginTB" Style="{StaticResource RoundedTextBox}"/>
+                        <TextBlock Text="Пароль:" Style="{StaticResource TextBlockStyle}" />
+                        <PasswordBox x:Name="PasswordTB"  Margin="5" FontFamily="Fonts/golos-ui_regular.ttf #Golos UI" FontSize="16">
+                            <PasswordBox.Template>
+                                <ControlTemplate  TargetType="{x:Type PasswordBox}">
+                                    <Border Background="{TemplateBinding Background}" x:Name="Bd" BorderBrush="#FFABADB3" BorderThickness="1" CornerRadius="5">
+                                        <ScrollViewer Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                                    </Border>
+                                </ControlTemplate>
+                            </PasswordBox.Template>
+                        </PasswordBox>
+                    </StackPanel>
+                    <Grid Grid.Row="1">
+                        <Button Content="Войти" Margin="10 5 200 5"  Name="EntryButton" />
+                        <TextBlock  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5" Name="ForgetPasswordTB" Style="{StaticResource TextBlockStyle}">
                     <Hyperlink> Забыли пароль? </Hyperlink>
-                </TextBlock>
-            </Grid>
+                        </TextBlock>
+                    </Grid>
+                </Grid>
+            </Border>
         </Grid>
-
     </Grid>
 </Window>
