@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DiplomAdminEditonBeta.Views.Pages"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Добавление нового поставщика"  Height="314.673" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Добавление нового перевозчика"  Height="314.673" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Grid Background="#FF209AFF">
         <Border Background="#FF49ADFF" Margin="10" CornerRadius="10">
         <StackPanel Margin="10">
@@ -14,8 +15,8 @@
             <TextBlock Text="Адрес:"  Style="{StaticResource TextBlockStyle}"/>
             <TextBox x:Name="AddressTB" Style="{StaticResource RoundedTextBox}"/>
             <TextBlock Text="Телефон:"  Style="{StaticResource TextBlockStyle}"/>
-            <TextBox x:Name="PhoneTB" Style="{StaticResource RoundedTextBox}"/>
-            <TextBlock Text="Почта:"  Style="{StaticResource TextBlockStyle}"/>
+                <xctk:MaskedTextBox x:Name="PhoneTB"/>
+                <TextBlock Text="Почта:"  Style="{StaticResource TextBlockStyle}"/>
             <TextBox x:Name="EmailTB" Style="{StaticResource RoundedTextBox}"/>
 
                 <Button Content="Создать" Height="30"  x:Name="AddBut" Click="AddBut_Click"/>

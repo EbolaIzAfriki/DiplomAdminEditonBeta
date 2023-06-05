@@ -35,7 +35,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             PointsPage = pointsPage;
             MainWorkOnTaskForm = mainWorkOnTaskForm;
             
-            if(MainWorkOnTaskForm.DBTask != null)
+            /*if(MainWorkOnTaskForm.DBTask != null)
             {
                 //Инициализируем список выбранных не выбранных клиентов а так же массив id выбранных клиентов
                 ChosedClient = MainWorkOnTaskForm.DBTask.Point.Select(p => p.Client).Distinct().ToList();
@@ -68,7 +68,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             ChoseVendorDataGrid.ItemsSource = ChosedClient.Where(p => p.TypeId == 2).ToList();
             AllVendorsDatagrid.ItemsSource = NotChosedClients.Where(p => p.TypeId == 2).ToList();
             IsInitializaFinished = true;
-            EnablePointPage();
+            EnablePointPage();*/
         }
 
         public void UpdateDataGridConsumptions()
@@ -104,7 +104,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         private void DeleteConsumptionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ChoseConsumprionDataGrid.SelectedItem == null)
+           /* if (ChoseConsumprionDataGrid.SelectedItem == null)
                 return;
 
             NotChosedClients.Add(ChoseConsumprionDataGrid.SelectedItem as Client);
@@ -130,7 +130,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                 }
             }
             UpdateDataGridConsumptions();
-            EnablePointPage();
+            EnablePointPage();*/
         }
 
         private void AddVendorButton_Click(object sender, RoutedEventArgs e)
@@ -148,7 +148,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         private void DeleteVendorButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ChoseVendorDataGrid.SelectedItem == null)
+           /* if (ChoseVendorDataGrid.SelectedItem == null)
                 return;
 
             NotChosedClients.Add(ChoseVendorDataGrid.SelectedItem as Client);
@@ -173,7 +173,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                 }
             }
             UpdateDataGridVendors();
-            EnablePointPage();
+            EnablePointPage();*/
         }
 
         private void CountConsumptionsTB_TextChanged(object sender, TextChangedEventArgs e)
@@ -183,10 +183,10 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
             if (MainWorkOnTaskForm.DBTask == null)
             {
-                DiplomBetaDBEntities.GetContext().Task.Add(new Task() {Status = DiplomBetaDBEntities.GetContext().Status.First(), Point = new List<Point>(), User = MainForm.CurrentUser, Constraint = new List<Constraint>() });
+                /*DiplomBetaDBEntities.GetContext().Task.Add(new Task() {Status = DiplomBetaDBEntities.GetContext().Status.First(), Point = new List<Point>(), User = MainForm.CurrentUser, Constraint = new List<Constraint>() });
                 DiplomBetaDBEntities.GetContext().SaveChanges();
                 MainWorkOnTaskForm.DBTask = DiplomBetaDBEntities.GetContext().Task.ToList().Last();
-                MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;
+                MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;*/
             }
 
             IsModificate = true;
@@ -196,20 +196,20 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             int CountConsPoint = MainWorkOnTaskForm.DBTask.Point.Where(p => p.Client.TypeId == 1).ToList().Count;
             if (CountConsPoint < CountConsumptions)
             {
-                for(int i = 0; i < CountConsumptions- CountConsPoint; i++)
+               /* for(int i = 0; i < CountConsumptions- CountConsPoint; i++)
                 {
                     int pos = MainWorkOnTaskForm.DBTask.Point.Where(p => p.Client.TypeId == 1).ToList().Count + 1;
                     MainWorkOnTaskForm.DBTask.Point.Add(new Point() { Task = MainWorkOnTaskForm.DBTask, Address = "", Client = ChosedClient.FirstOrDefault(p => p.TypeId == 1), Name = "Магазин " + pos, Position = pos, ProductCount = 0 });
                     DiplomBetaDBEntities.GetContext().SaveChanges();
-                }
+                }*/
             }
             else
             {
-                for (int i = 0; i > CountConsumptions - CountConsPoint; i--)
+                /*for (int i = 0; i > CountConsumptions - CountConsPoint; i--)
                 {
                     DiplomBetaDBEntities.GetContext().Point.Remove(MainWorkOnTaskForm.DBTask.Point.Last(p => p.Client.TypeId == 1));
                     DiplomBetaDBEntities.GetContext().SaveChanges();
-                }
+                }*/
             }
             EnablePointPage();
         }
@@ -221,10 +221,10 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
             if (MainWorkOnTaskForm.DBTask == null)
             {
-                DiplomBetaDBEntities.GetContext().Task.Add(new Task() { Status = DiplomBetaDBEntities.GetContext().Status.First(), Point = new List<Point>(), User = MainForm.CurrentUser, Constraint = new List<Constraint>() });
+                /*DiplomBetaDBEntities.GetContext().Task.Add(new Task() { Status = DiplomBetaDBEntities.GetContext().Status.First(), Point = new List<Point>(), User = MainForm.CurrentUser, Constraint = new List<Constraint>() });
                 DiplomBetaDBEntities.GetContext().SaveChanges();
                 MainWorkOnTaskForm.DBTask = DiplomBetaDBEntities.GetContext().Task.ToList().Last();
-                MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;
+                MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;*/
             }
 
             IsModificate = true;
@@ -236,17 +236,17 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             {
                 for (int i = 0; i < CountVendors - CountVendPoint; i++)
                 {
-                    int pos = MainWorkOnTaskForm.DBTask.Point.Where(p => p.Client.TypeId == 2).ToList().Count + 1;
+                    /*int pos = MainWorkOnTaskForm.DBTask.Point.Where(p => p.Client.TypeId == 2).ToList().Count + 1;
                     MainWorkOnTaskForm.DBTask.Point.Add(new Point() { Task = MainWorkOnTaskForm.DBTask, Address = "", Client = ChosedClient.FirstOrDefault(p => p.TypeId == 2), Name = "Склад " + pos, Position = pos, ProductCount = 0 });
-                    DiplomBetaDBEntities.GetContext().SaveChanges();
+                    DiplomBetaDBEntities.GetContext().SaveChanges();*/
                 }
             }
             else
             {
                 for (int i = 0; i > CountVendors - CountVendPoint; i--)
                 {
-                    DiplomBetaDBEntities.GetContext().Point.Remove(MainWorkOnTaskForm.DBTask.Point.Last(p => p.Client.TypeId == 2));
-                    DiplomBetaDBEntities.GetContext().SaveChanges();
+                    /*DiplomBetaDBEntities.GetContext().Point.Remove(MainWorkOnTaskForm.DBTask.Point.Last(p => p.Client.TypeId == 2));
+                    DiplomBetaDBEntities.GetContext().SaveChanges();*/
                 }
             }
 

@@ -24,7 +24,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         private void AddServiceButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ListServiceDataGrid.SelectedItem == null)
+           /* if (ListServiceDataGrid.SelectedItem == null)
                 return;
             ChosedService.Add(ListServiceDataGrid.SelectedItem as Service);
             NotChosedService.Remove(ListServiceDataGrid.SelectedItem as Service);
@@ -32,13 +32,13 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             MainWorkOnTaskForm.DBTask.Service.Add(ListServiceDataGrid.SelectedItem as Service);
             DiplomBetaDBEntities.GetContext().SaveChanges();
 
-            UpdateDatagrids();
+            UpdateDatagrids();*/
         }
 
         public NeedServisesAndChoseCarrierPage()
         {
             InitializeComponent();
-            NotChosedService = DiplomBetaDBEntities.GetContext().Service.ToList();
+            /*NotChosedService = DiplomBetaDBEntities.GetContext().Service.ToList();
             ListServiceDataGrid.ItemsSource = NotChosedService;
             if (MainWorkOnTaskForm.DBTask == null)
                 return;
@@ -57,12 +57,12 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             {
                 CurrentCarrierTB.Text = "Текущий поставщик: " + MainWorkOnTaskForm.DBTask.Carrier.Name;
             }
-            ChoseServiceDataGrid.ItemsSource = ChosedService;
+            ChoseServiceDataGrid.ItemsSource = ChosedService;*/
         }
 
         private void DeleteServiceButton_Click(object sender, RoutedEventArgs e)
         {
-            if (ChoseServiceDataGrid.SelectedItem == null)
+            /*if (ChoseServiceDataGrid.SelectedItem == null)
                 return;
             NotChosedService.Add(ChoseServiceDataGrid.SelectedItem as Service);
             ChosedService.Remove(ChoseServiceDataGrid.SelectedItem as Service);
@@ -70,24 +70,24 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             MainWorkOnTaskForm.DBTask.Service.Remove(ChoseServiceDataGrid.SelectedItem as Service);
             DiplomBetaDBEntities.GetContext().SaveChanges();
 
-            UpdateDatagrids();
+            UpdateDatagrids();*/
 
 
         }
 
         private void CarriersDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CarriersDataGrid.SelectedItem == null)
+           /* if (CarriersDataGrid.SelectedItem == null)
                 return;
             Carrier carrier = CarriersDataGrid.SelectedItem as Carrier;
             MainWorkOnTaskForm.DBTask.Carrier = carrier;
             CurrentCarrierTB.Text = "Текущий поставщик: " + carrier.Name;
-            DiplomBetaDBEntities.GetContext().SaveChanges();
+            DiplomBetaDBEntities.GetContext().SaveChanges();*/
         }
 
         public void UpdateDatagrids()
         {
-            ChoseServiceDataGrid.ItemsSource = null;
+            /*ChoseServiceDataGrid.ItemsSource = null;
             ListServiceDataGrid.ItemsSource = null;
             CarriersDataGrid.ItemsSource = null;
             ChoseServiceDataGrid.ItemsSource = ChosedService;
@@ -110,7 +110,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                     continue;
                 carriers.Add(carrier);
             }
-            CarriersDataGrid.ItemsSource = carriers;
+            CarriersDataGrid.ItemsSource = carriers;*/
         }
     }
 }

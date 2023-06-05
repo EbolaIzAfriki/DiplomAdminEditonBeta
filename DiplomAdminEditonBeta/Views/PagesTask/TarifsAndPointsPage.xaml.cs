@@ -59,7 +59,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         public void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            int Counter = 0;
+           /* int Counter = 0;
             bool Flag = true;
             for (int i = 1; i < TarifMatrix.Rows - 1; i++)
             {
@@ -82,7 +82,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                     Counter++;
                 }
             }
-            MainWorkOnTaskForm.ConclusionRB.IsEnabled = true;
+            MainWorkOnTaskForm.ConclusionRB.IsEnabled = true;*/
         }
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
@@ -95,7 +95,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
         List<TransportationCost> transportationCosts = new List<TransportationCost>();
         public void FillMatrix()
         {
-            TarifMatrix = new MatrixModel() { Columns = VendorsAndConsumptionsPage.CountConsumptions + 2, Rows = VendorsAndConsumptionsPage.CountVendors + 2 };
+            /*TarifMatrix = new MatrixModel() { Columns = VendorsAndConsumptionsPage.CountConsumptions + 2, Rows = VendorsAndConsumptionsPage.CountVendors + 2 };
             TarifsMatrixLV.DataContext = null;
             TarifsMatrixLV.ItemsSource = null;
 
@@ -256,7 +256,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             {
                 TarifMatrix.Items[TarifMatrix.Columns * j - 1].Value = VendorsNames[j - 2].ProductCount.ToString();
                 TarifMatrix.Items[TarifMatrix.Columns * j - 1].IsNotEnable = true;
-            }
+            }*/
         }
     }
 }

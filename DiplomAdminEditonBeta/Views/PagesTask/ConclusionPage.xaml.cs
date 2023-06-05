@@ -604,11 +604,11 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             ConclusionTB.Text += $"\n\nНеудовлетворенные потребности: \n" + UnmetNeedsText + "\nОбщая нехватка: " + UnSum;
 
 
-            MainWorkOnTaskForm.DBTask.Conclusion = ConclusionTB.Text;
+            /*MainWorkOnTaskForm.DBTask.Conclusion = ConclusionTB.Text;
             MainWorkOnTaskForm.DBTask.Cost = Sum;
             MainWorkOnTaskForm.DBTask.Status = DiplomBetaDBEntities.GetContext().Status.ToList()[1];
             DiplomBetaDBEntities.GetContext().SaveChanges();
-            MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;
+            MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;*/
         }
     }
 }

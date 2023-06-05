@@ -22,44 +22,43 @@ namespace DiplomAdminEditonBeta
     {
 
         CarriersPage CarriersPage = new CarriersPage();
-        ClientPage clientPage;
+        ClientPage clientPage = new ClientPage();
         public RequestPage RequestPage;
         public static User CurrentUser;
+        public static MainForm mainForm;
         public MainForm()
         {
             InitializeComponent();
+            mainForm = this;
             RequestPage = new RequestPage(this);
-            clientPage = new ClientPage(CarriersPage);
             MainFrame.Content = clientPage;
-            CurrentUser = DiplomBetaDBEntities.GetContext().User.First();
         }
-
         private void ClientsRB_Checked(object sender, RoutedEventArgs e)
         {
             if (MainFrame == null)
                 return;
             MainFrame.Content = clientPage;
         }
-
         private void RequestsRB_Checked(object sender, RoutedEventArgs e)
         {
             if (MainFrame == null)
                 return;
             MainFrame.Content = RequestPage;
-            RequestPage.UpdateTaskList();
         }
-
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             AutorizationForm autorizationForm = new AutorizationForm();
-            autorizationForm.ShowDialog();
+            autorizationForm.Show();
+            Close();
         }
 
-        private void Window_StylusSystemGesture(object sender, StylusSystemGestureEventArgs e)
+        public static void ReturnToAutorization()
         {
-
+            MessageBox.Show("Соединение с сервером потеряно!");
+            AutorizationForm autorizationForm = new AutorizationForm();
+            autorizationForm.Show();
+            mainForm.Close();
         }
-
         private void CarriersRB_Checked(object sender, RoutedEventArgs e)
         {
             if (MainFrame == null)

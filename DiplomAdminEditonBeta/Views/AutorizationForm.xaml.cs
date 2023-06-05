@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DiplomAdminEditonBeta.TCPModels;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,37 @@ namespace DiplomAdminEditonBeta
         public AutorizationForm()
         {
             InitializeComponent();
+        }
+
+        private void EntryButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (!ClientTCP.IsConnected)
+                {
+                    ClientTCP.Connect();
+                    ClientTCP.IsConnected = true;
+                }
+            }
+            catch (Exception EX)
+            {
+                MessageBox.Show(EX.Message);
+            }
+            TCPMessege tCPMessege = new TCPMessege(2, 1, new User() { Login = LoginTB.Text, Password = PasswordTB.Password });
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            if(tCPMessege == null)
+            {
+                return;
+            }
+            if(tCPMessege.CodeOperation == 0)
+            {
+                MessageBox.Show("Неверно введен логин или пароль!");
+                return;
+            }
+            MainForm mainForm = new MainForm();
+            MainForm.CurrentUser = JsonConvert.DeserializeObject<User>(tCPMessege.Entity);
+            mainForm.Show();
+            Close();
         }
     }
 }

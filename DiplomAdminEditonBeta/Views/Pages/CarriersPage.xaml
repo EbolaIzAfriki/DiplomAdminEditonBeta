@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DiplomAdminEditonBeta"
       xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="DiplomAdminEditonBeta.CarriersPage"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" 
       d:DesignHeight="469" d:DesignWidth="794" MinHeight="469" MinWidth="794"
       Title="Page2">
@@ -33,12 +34,12 @@
                                 <ColumnDefinition MaxWidth="30"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Margin="2" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" x:Name="SearchTB" Grid.Column="1"/>
+                            <TextBox Margin="2" TextChanged="SearchTB_TextChanged" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" x:Name="SearchTB" Grid.Column="1"/>
                             <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
                         </Grid>
                     </Border>
 
-                    <Button Content="Добавить поставщика" Grid.Column="1"  x:Name="AddBut" Click="AddBut_Click" Margin="150 15 20 5"/>
+                    <Button Content="Добавить перевозчика" Grid.Column="1"  x:Name="AddBut" Click="AddBut_Click" Margin="150 15 20 5"/>
                 </Grid>
 
 
@@ -47,7 +48,13 @@
                         <DataGridTextColumn Header="Id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged}" IsReadOnly ="True" Width="0.5*"/>
                         <DataGridTextColumn Header="Наименование" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="1.1*"/>
                         <DataGridTextColumn Header="Адрес" Binding="{Binding Address, UpdateSourceTrigger=PropertyChanged}"   Width="1.3*"/>
-                        <DataGridTextColumn Header="Телефон" Binding="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" Width="1*"/>
+                        <DataGridTemplateColumn Header="Телефон" Width="1*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <xctk:MaskedTextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" BorderBrush="Transparent" LostFocus="MaskedTextBox_LostFocus"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Почта" Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged}"  Width="*"/>
                         <DataGridTemplateColumn  Width="0.4*">
                             <DataGridTemplateColumn.CellTemplate>
@@ -81,7 +88,7 @@
 
             <Border Background="#FF49ADFF" CornerRadius="20" Margin="10" Grid.Column="0" Grid.Row="1">
                 <Grid>
-                    <DataGrid Margin="20 10 20 5" Grid.Row="0"  AutoGenerateColumns="False" x:Name="ServiceDataGrid" RowStyle="{DynamicResource DataGridRowStyle1}"  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}" CellEditEnding="ServiceDataGrid_CellEditEnding">
+                    <DataGrid Margin="20 10 20 5" Grid.Row="0"  AutoGenerateColumns="False" x:Name="ServiceDataGrid" RowStyle="{DynamicResource DataGridRowStyle1}"  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}" SelectionChanged="ServiceDataGrid_SelectionChanged" CellEditEnding="ServiceDataGrid_CellEditEnding">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Наименование" Binding="{Binding Service.Name, UpdateSourceTrigger=PropertyChanged}" Width="1.5*" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Цена" Binding="{Binding Cost, UpdateSourceTrigger=PropertyChanged}"  Width="*"/>

@@ -1,4 +1,6 @@
-﻿using DiplomAdminEditonBeta.Views;
+﻿using DiplomAdminEditonBeta.TCPModels;
+using DiplomAdminEditonBeta.Views;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +23,14 @@ namespace DiplomAdminEditonBeta
     /// </summary>
     public partial class RequestPage : Page
     {
-        MainForm MainForm;
+        private MainForm MainForm;
+        private List<Task> tasks;
+
         public RequestPage(MainForm mainForm)
         {
             InitializeComponent();
             MainForm = mainForm;
+            UpdateTaskList();
         }
 
         private void AddTaskBut_Click(object sender, RoutedEventArgs e)
@@ -37,13 +42,18 @@ namespace DiplomAdminEditonBeta
 
         public void UpdateTaskList()
         {
-            ClientsDataGrid.ItemsSource = null;
-            ClientsDataGrid.ItemsSource = DiplomBetaDBEntities.GetContext().Task.ToList();
+            TasksDataGrid.ItemsSource = null;
+
+            TCPMessege tCPMessege = new TCPMessege(1,4,null);
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            tasks = JsonConvert.DeserializeObject<List<Task>>(tCPMessege.Entity);
+
+            TasksDataGrid.ItemsSource = tasks;
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Вы действительно хотите удалить задачу?", "Удаление задачи", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+           /* if (MessageBox.Show("Вы действительно хотите удалить задачу?", "Удаление задачи", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
             {
                 return;
             }
@@ -54,14 +64,14 @@ namespace DiplomAdminEditonBeta
                 DiplomBetaDBEntities.GetContext().Task.Remove(ClientsDataGrid.SelectedItem as Task);
                 DiplomBetaDBEntities.GetContext().SaveChanges();
                 UpdateTaskList();
-            }
+            }*/
         }
 
         private void ClientsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (ClientsDataGrid.SelectedItem == null)
+            if (TasksDataGrid.SelectedItem == null)
                 return;
-            MainWorkOnTaskForm mainWorkOnTaskForm = new MainWorkOnTaskForm(MainForm, ClientsDataGrid.SelectedItem as Task);
+            MainWorkOnTaskForm mainWorkOnTaskForm = new MainWorkOnTaskForm(MainForm, TasksDataGrid.SelectedItem as Task);
             mainWorkOnTaskForm.Show();
             MainForm.Visibility = Visibility.Hidden;
         }

@@ -41,15 +41,15 @@
     <ApplicationIcon>Resources\Iconka.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="PropertyChanged, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ee3ee20bcf148ddd, processorArchitecture=MSIL">
       <HintPath>..\packages\PropertyChanged.Fody.4.1.0\lib\net40\PropertyChanged.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleTCP, Version=1.0.24.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleTCP.1.0.24\lib\net45\SimpleTCP.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -70,49 +70,42 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=4.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=4.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=4.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=4.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=4.5.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.5.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Carrier.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Constraint.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DiplomBetaDBEntitiesContext.cs" />
-    <Compile Include="Client.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DiplomModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="Matrix Models\Matrix model.cs" />
-    <Compile Include="Service.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ServiceCarrier.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sp_helpdiagramdefinition_Result.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sp_helpdiagrams_Result.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Status.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TransportationCost.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TypeClient.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\Carrier.cs" />
+    <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Constraint.cs" />
+    <Compile Include="Models\Point.cs" />
+    <Compile Include="Models\Service.cs" />
+    <Compile Include="Models\ServiceCarrier.cs" />
+    <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\Task.cs" />
+    <Compile Include="Models\TransportationCost.cs" />
+    <Compile Include="Models\TypeClient.cs" />
+    <Compile Include="Models\TypeConstraint.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="TCPModels\ClientTCP.cs" />
+    <Compile Include="TCPModels\TCPMessege.cs" />
     <Compile Include="Views\MainForm.xaml.cs">
       <DependentUpon>MainForm.xaml</DependentUpon>
     </Compile>
@@ -152,21 +145,6 @@
     <Compile Include="Views\Pages\CarriersPage.xaml.cs">
       <DependentUpon>CarriersPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Point.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="sysdiagrams.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Task.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TypeConstraint.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="User.cs">
-      <DependentUpon>DiplomModel.tt</DependentUpon>
-    </Compile>
     <Page Include="Views\AutorizationForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -174,16 +152,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DiplomModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DiplomModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DiplomModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DiplomModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Views\AutorizationForm.xaml.cs">
       <DependentUpon>AutorizationForm.xaml</DependentUpon>
@@ -260,13 +228,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EntityDeploy Include="DiplomModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DiplomModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="DiplomModel.edmx.diagram">
-      <DependentUpon>DiplomModel.edmx</DependentUpon>
-    </None>
     <Resource Include="Fonts\Quota-Bold.otf" />
     <Resource Include="Fonts\golos-ui_regular.ttf" />
     <None Include="packages.config" />
@@ -279,16 +240,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DiplomModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DiplomModel.Context.cs</LastGenOutput>
-      <DependentUpon>DiplomModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="DiplomModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DiplomModel.edmx</DependentUpon>
-      <LastGenOutput>DiplomModel.cs</LastGenOutput>
-    </Content>
     <None Include="Resources\Iconka.ico" />
     <Resource Include="Иконки\СтрелкаБ.png" />
     <Resource Include="Иконки\Стрелка.png" />

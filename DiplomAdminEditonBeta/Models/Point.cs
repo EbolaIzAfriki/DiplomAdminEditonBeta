@@ -9,18 +9,33 @@
 
 namespace DiplomAdminEditonBeta
 {
+    using DiplomAdminEditonBeta.Views.PagesTask;
     using System;
     using System.Collections.Generic;
-    
-    public partial class Constraint
+    using System.Linq;
+
+    public partial class Point
     {
         public int Id { get; set; }
+        public int IdClient { get; set; }
+        public string Name { get; set; }
+        public int ProductCount { get; set; }
         public int IdTask { get; set; }
-        public int TypeConstraintId { get; set; }
-        public Nullable<int> ProductCount { get; set; }
-        public string IdPoints { get; set; }
+        public int Position { get; set; }
+        public string Address { get; set; }
     
+        public virtual Client Client { get; set; }
         public virtual Task Task { get; set; }
-        public virtual TypeConstraint TypeConstraint { get; set; }
+
+        /*
+        public string[] clientsList
+        {
+            get
+            {
+                string[] vs = (string[])VendorsAndConsumptionsPage.ChosedClient.Where(p => p.TypeId == Client.TypeId).Select(d => d.CompanyName).ToArray().Clone();
+                return vs;
+            }
+        }
+        */
     }
 }

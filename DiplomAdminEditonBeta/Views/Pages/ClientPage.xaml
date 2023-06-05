@@ -23,14 +23,13 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-
             <Border  Background="#FFFFFFFF" Margin="20 15 150 5" CornerRadius="5" BorderBrush="#FFABADB3" BorderThickness="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition MaxWidth="30"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Margin="2" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" Name="SearchTB" Grid.Column="1"/>
+                    <TextBox Margin="2" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" TextChanged="SearchTB_TextChanged" Name="SearchTB" Grid.Column="1"/>
                     <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
                 </Grid>
             </Border>

@@ -1,7 +1,8 @@
-﻿using DiplomAdminEditonBeta.Views.Pages;
+﻿using DiplomAdminEditonBeta.TCPModels;
+using DiplomAdminEditonBeta.Views.Pages;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace DiplomAdminEditonBeta
 {
@@ -22,19 +24,34 @@ namespace DiplomAdminEditonBeta
     /// </summary>
     public partial class ClientPage : Page
     {
-        CarriersPage CarriersPage;
-        public ClientPage(CarriersPage carriersPage)
+        public List<Client> Clients = new List<Client>();
+        public ClientPage()
         {
             DataContext = this;
             InitializeComponent();
-            CarriersPage = carriersPage;
-            ClientsDataGrid.ItemsSource = DiplomBetaDBEntities.GetContext().Client.ToList();
+            UpdateClientDatagrid();
         }
 
         public void UpdateClientDatagrid()
         {
             ClientsDataGrid.ItemsSource = null;
-            ClientsDataGrid.ItemsSource = DiplomBetaDBEntities.GetContext().Client.ToList();
+
+            TCPMessege tCPMessege = new TCPMessege(1,2,null);
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            if(tCPMessege == null)
+            {
+                MainForm.ReturnToAutorization();
+                return;
+            }
+            Clients = JsonConvert.DeserializeObject<List<Client>>(tCPMessege.Entity);
+
+            ClientsDataGrid.ItemsSource = Clients;
+        }
+
+        public void UpdateClientDatagridFromList()
+        {
+            ClientsDataGrid.ItemsSource = null;
+            ClientsDataGrid.ItemsSource = Clients;
         }
 
         private void AddBut_Click(object sender, RoutedEventArgs e)
@@ -50,16 +67,27 @@ namespace DiplomAdminEditonBeta
                 if (ClientsDataGrid.SelectedItem == null)
                     return;
                 Client client = ClientsDataGrid.SelectedItem as Client;
-                DiplomBetaDBEntities.GetContext().Client.Remove(client);
-                DiplomBetaDBEntities.GetContext().SaveChanges();
-                UpdateClientDatagrid();
-                CarriersPage.UpdateDataGrid();
+
+                if (MessageBox.Show($"Вы действительно хотите удалить клиента {client.CompanyName}?", "Удаление клиента", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                TCPMessege tCPMessege = new TCPMessege(5, 2, client.Id);
+                ClientTCP.SendMessege(tCPMessege);
+                Clients.Remove(client);
+                UpdateClientDatagridFromList();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                MainForm.ReturnToAutorization();
+                return;
             }
         }
+
+        private DispatcherTimer dispatcherTimer = new DispatcherTimer() { Interval = new TimeSpan(20) };
+        private int position = 0;
 
         private void ClientsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
@@ -68,33 +96,51 @@ namespace DiplomAdminEditonBeta
                 if (ClientsDataGrid.SelectedItem == null)
                     return;
                 Client client = ClientsDataGrid.SelectedItem as Client;
-                DiplomBetaDBEntities.GetContext().Entry(client).State = EntityState.Modified;
-                DiplomBetaDBEntities.GetContext().SaveChanges();
+                client.Address = client.Address.Trim(' ');
+                client.CompanyName = client.CompanyName.Trim(' ');
+                client.Email = client.Email.Trim(' ');
+
+                TCPMessege tCPMessege = new TCPMessege(4, 2, client);
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+
+                if (tCPMessege.CodeOperation > 0)
+                {
+                    position = Clients.IndexOf(client);
+                }
+                else
+                {
+                    List<string> vs = JsonConvert.DeserializeObject<List<string>>(tCPMessege.Entity);
+                    MessageBox.Show("При изменении произошла ошибка: " + vs[0]);
+                    position = Clients.IndexOf(client);
+                    Clients[position] = JsonConvert.DeserializeObject<Client>(vs[1]);
+                    UpdateClientDatagridFromList();
+                }
+                dispatcherTimer.Tick += Timertick;
+                dispatcherTimer.Start();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+                MainForm.ReturnToAutorization();
+                return;
             }
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Timertick(object sender, EventArgs e)
         {
-            try
+            dispatcherTimer.Stop();
+            ClientsDataGrid.SelectedIndex = position;
+        }
+
+        private void SearchTB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(SearchTB.Text == "")
             {
-                string s = (sender as ComboBox).SelectedItem.ToString();
-                if (ClientsDataGrid.SelectedItem == null || s == "")
-                    return;
-                TypeClient typeClient = DiplomBetaDBEntities.GetContext().TypeClient.Where(p => p.Name == s).FirstOrDefault();
-                Client client = ClientsDataGrid.SelectedItem as Client;
-                client.TypeClient = typeClient;
-                DiplomBetaDBEntities.GetContext().Entry(DiplomBetaDBEntities.GetContext().TypeClient.Where(p => p.Name != s).FirstOrDefault()).State = EntityState.Unchanged;
-                DiplomBetaDBEntities.GetContext().SaveChanges();
-                
+                UpdateClientDatagridFromList();
+                return;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            ClientsDataGrid.ItemsSource = null;
+            ClientsDataGrid.ItemsSource = Clients.Where(p => p.CompanyName.Contains(SearchTB.Text) || p.Address.Contains(SearchTB.Text) || p.Email.Contains(SearchTB.Text));
         }
     }
 }

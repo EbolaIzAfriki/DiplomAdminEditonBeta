@@ -26,7 +26,7 @@ namespace DiplomAdminEditonBeta.Views
         public static Task DBTask = null;
         public MainWorkOnTaskForm(MainForm mainForm, Task task)
         {
-            DBTask = task;
+            /*DBTask = task;
             NeedServisesAndChoseCarrierPage = new NeedServisesAndChoseCarrierPage();
             CreateConstrainPage = new ConstrainsPage();
             if (DBTask.User == null)
@@ -34,7 +34,7 @@ namespace DiplomAdminEditonBeta.Views
                 DBTask.User = MainForm.CurrentUser;
                 DiplomBetaDBEntities.GetContext().SaveChanges();
             }
-
+*/
             InitializeComponent();
 
             MainForm = mainForm;

@@ -28,19 +28,19 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         private void ButtonAddConstrain_Click(object sender, RoutedEventArgs e)
         {
-            Constraint сonstraint = new Constraint() { Task = MainWorkOnTaskForm.DBTask, TypeConstraint = DiplomBetaDBEntities.GetContext().TypeConstraint.First(), ProductCount = 0};
+           /* Constraint сonstraint = new Constraint() { Task = MainWorkOnTaskForm.DBTask, TypeConstraint = DiplomBetaDBEntities.GetContext().TypeConstraint.First(), ProductCount = 0};
             MainWorkOnTaskForm.DBTask.Constraint.Add(сonstraint);
             UpdateList();
             DiplomBetaDBEntities.GetContext().Constraint.Add(сonstraint);
-            DiplomBetaDBEntities.GetContext().SaveChanges();
+            DiplomBetaDBEntities.GetContext().SaveChanges();*/
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            Button cmd = (Button)sender;
+            /*Button cmd = (Button)sender;
             DiplomBetaDBEntities.GetContext().Constraint.Remove((Constraint)cmd.DataContext);
             DiplomBetaDBEntities.GetContext().SaveChanges();
-            UpdateList();
+            UpdateList();*/
         }
 
         private void UpdateList()
@@ -50,7 +50,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
         }
         private void ComboBoxVendors_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
+            /*if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
                 return;
 
             Constraint constraint = (Constraint)(sender as ComboBox).DataContext;
@@ -64,12 +64,12 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                 ListPoints[0] = ((sender as ComboBox).SelectedItem as Point).Position.ToString();
                 constraint.IdPoints = ListPoints[0] + "&" + ListPoints[1];
             }
-            DiplomBetaDBEntities.GetContext().SaveChanges();
+            DiplomBetaDBEntities.GetContext().SaveChanges();*/
         }
 
         private void ComboBoxConsumers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
+            /*if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
                 return;
 
             Constraint constraint = (Constraint)(sender as ComboBox).DataContext;
@@ -83,25 +83,25 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                 ListPoints[1] = ((sender as ComboBox).SelectedItem as Point).Position.ToString();
                 constraint.IdPoints = ListPoints[0] + "&" + ListPoints[1];
             }
-            DiplomBetaDBEntities.GetContext().SaveChanges();
+            DiplomBetaDBEntities.GetContext().SaveChanges();*/
         }
 
         private void ComboBoxConstrain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
+            /*if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
                 return;
 
             Constraint constraint = (Constraint)(sender as ComboBox).DataContext;
             constraint.TypeConstraint = (sender as ComboBox).SelectedItem as TypeConstraint;
-            DiplomBetaDBEntities.GetContext().SaveChanges();
+            DiplomBetaDBEntities.GetContext().SaveChanges();*/
         }
 
         private void TextBoxCount_TextChanged(object sender, TextChangedEventArgs e)
         {
-            TextBox textBox = sender as TextBox;
+            /*TextBox textBox = sender as TextBox;
             Constraint constraint = (Constraint)textBox.DataContext;
             constraint.ProductCount = int.Parse(textBox.Text);
-            DiplomBetaDBEntities.GetContext().SaveChanges();
+            DiplomBetaDBEntities.GetContext().SaveChanges();*/
         }
     }
 }

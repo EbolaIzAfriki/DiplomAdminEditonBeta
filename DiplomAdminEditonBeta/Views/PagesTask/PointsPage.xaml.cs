@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         private void PointsDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            Point point = PointsDataGrid.SelectedItem as Point;
+            /*Point point = PointsDataGrid.SelectedItem as Point;
             if (point == null)
                 return;
             DiplomBetaDBEntities.GetContext().Entry(point).State = EntityState.Modified;
@@ -51,13 +50,13 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                 MainWorkOnTaskForm.TarifsRB.IsEnabled = false;
             }
 
-            VendorsAndConsumptionsPage.IsModificate = true;
+            VendorsAndConsumptionsPage.IsModificate = true;*/
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         
         {
-            try
+            /*try
             {
                 if (!(sender as ComboBox).IsMouseOver || PointsDataGrid.SelectedItem == null)
                     return;
@@ -75,7 +74,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
+            }*/
         }
     }
 }

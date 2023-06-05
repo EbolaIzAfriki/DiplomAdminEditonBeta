@@ -11,7 +11,8 @@ namespace DiplomAdminEditonBeta
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.Linq;
+
     public partial class Task
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -43,5 +44,26 @@ namespace DiplomAdminEditonBeta
         public virtual ICollection<Service> Service { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Constraint> Constraint { get; set; }
+
+        public string Clients
+        {
+            get
+            {
+                List<string> vs = Point.Select(p => p.Client).Select(p => p.CompanyName).Distinct().ToList();
+                string s = "";
+                bool first = true;
+                foreach (string r in vs)
+                {
+                    if (first)
+                    {
+                        first = false;
+                        s = r;
+                        continue;
+                    }
+                    s += "\n" + r;
+                }
+                return s;
+            }
+        }
     }
 }

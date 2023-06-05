@@ -34,7 +34,7 @@
     </Grid>
 
 
-        <DataGrid Margin="20 10 20 5" Grid.Row="1"  AutoGenerateColumns="False" x:Name="ClientsDataGrid"  RowStyle="{DynamicResource DataGridRowStyle1}"  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}" MouseDoubleClick="ClientsDataGrid_MouseDoubleClick">
+        <DataGrid Margin="20 10 20 5" Grid.Row="1"  AutoGenerateColumns="False" x:Name="TasksDataGrid"  RowStyle="{DynamicResource DataGridRowStyle1}"  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}" MouseDoubleClick="ClientsDataGrid_MouseDoubleClick">
         <DataGrid.Columns>
                 <DataGridTextColumn Header="Id" Binding="{Binding Id,  UpdateSourceTrigger=PropertyChanged}" Width="0.5*" IsReadOnly ="True"/>
                 <DataGridTextColumn Header="Статус" Binding="{Binding Status.Name,  UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Width="*"/>

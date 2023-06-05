@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DiplomAdminEditonBeta.TCPModels;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,17 +32,36 @@ namespace DiplomAdminEditonBeta.Views.Pages
         {
             try
             {
-                DiplomBetaDBEntities.GetContext().Carrier.Add(new Carrier()
+                if(string.IsNullOrEmpty(AddressTB.Text.Replace(" ", "")) || string.IsNullOrEmpty(EmailTB.Text.Replace(" ", "")) || string.IsNullOrEmpty(NameTB.Text.Replace(" ", "")) || PhoneTB.Text.Contains('_'))
                 {
-                    Address = AddressTB.Text,
-                    Email = EmailTB.Text,
-                    Name = NameTB.Text,
+                    MessageBox.Show("Не все поля заполнены!!!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                TCPMessege tCPMessege = new TCPMessege(3,3, new Carrier()
+                {
+                    Address = AddressTB.Text.Trim(),
+                    Email = EmailTB.Text.Trim(),
+                    Name = NameTB.Text.Trim(),
                     Phone = PhoneTB.Text
                 });
-                DiplomBetaDBEntities.GetContext().SaveChanges();
-                CarriersPage.UpdateDataGrid();
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                if (tCPMessege == null)
+                {
+                    Close();
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                if (tCPMessege.CodeOperation == 0)
+                {
+                    MessageBox.Show(JsonConvert.DeserializeObject<string>(tCPMessege.Entity), "Ошибка при создании", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                CarriersPage.Carriers.Add(JsonConvert.DeserializeObject<Carrier>(tCPMessege.Entity));
+                CarriersPage.UpdateCarriersDatagridFromList();
                 MessageBox.Show("Перевозчик был добавлен!");
-                this.Close();
+                Close();
             }
             catch(Exception ex)
             {

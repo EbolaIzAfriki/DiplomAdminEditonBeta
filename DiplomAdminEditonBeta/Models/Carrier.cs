@@ -31,5 +31,18 @@ namespace DiplomAdminEditonBeta
         public virtual ICollection<ServiceCarrier> ServiceCarrier { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Task> Task { get; set; }
+
+        public string ListService
+        {
+            get
+            {
+                string output = "";
+                foreach (ServiceCarrier serviceCarrier in ServiceCarrier)
+                {
+                    output += serviceCarrier.Service.Name + ": " + serviceCarrier.Cost + ";\n";
+                }
+                return output;
+            }
+        }
     }
 }
