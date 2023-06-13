@@ -19,7 +19,7 @@ namespace DiplomAdminEditonBeta
         {
             this.Constraint = new HashSet<Constraint>();
         }
-    
+        public static List<TypeConstraint> typeConstraints;
         public int Id { get; set; }
         public string Name { get; set; }
     

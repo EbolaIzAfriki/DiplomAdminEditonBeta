@@ -8,11 +8,12 @@
        d:DesignHeight="721" d:DesignWidth="1194" MinHeight="721" MinWidth="1194"
       Title="ChosePostAndConsumptions">
     <Grid>
-            <Grid.RowDefinitions>
+        <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
-            </Grid.RowDefinitions>
-            <Border Margin="10" CornerRadius="20">
+        </Grid.RowDefinitions>
+        <TextBox Name="labalFoc" Width="0" Height="0"/>
+        <Border Margin="10" CornerRadius="20">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
@@ -26,7 +27,7 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Число заказчиков:" Style="{StaticResource TextBlockStyle}" VerticalAlignment="Center" Foreground="White" />
-                    <TextBox HorizontalAlignment="Right" Margin="5" FontSize="24" Width="300" x:Name="CountConsumptionsTB" TextChanged="CountConsumptionsTB_TextChanged">
+                    <TextBox HorizontalAlignment="Right" Margin="5" PreviewTextInput="CountConsumptionsTB_PreviewTextInput" FontSize="24" Width="300" KeyDown="CountConsumptionsTB_KeyDown" x:Name="CountConsumptionsTB" LostFocus="CountConsumptionsTB_LostFocus">
                         <TextBox.Style>
                             <Style BasedOn="{StaticResource RoundedTextBox}" TargetType="TextBox">
                                 <Style.Triggers>
@@ -38,18 +39,21 @@
                         </TextBox.Style>
                     </TextBox>
 
-                    <Border  Background="#FFFFFFFF" Margin="10 4 10 4" CornerRadius="5" BorderBrush="#FFABADB3" BorderThickness="1" Grid.Column="2">
+                    <Border  Background="#FFFFFFFF" Margin="10 4 60 4" CornerRadius="5" BorderBrush="#FFABADB3" BorderThickness="1" Grid.Column="2">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition MaxWidth="30"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Margin="0" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}"  FontSize="24" Name="SearchTB" Grid.Column="1"/>
+                            <TextBox Margin="0" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}"  FontSize="24" Name="SearchConsTB" Grid.Column="1" TextChanged="SearchConsTB_TextChanged"/>
                             <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
                         </Grid>
                     </Border>
+                <Button HorizontalAlignment="Right" x:Name="RefreshList" Grid.Column="2" Click="RefreshList_Click">
+                    <Image Source="/Иконки/RefreshIcon.png"/>
+                </Button>
 
-                    <Border Background="#FF49ADFF" CornerRadius="20" Margin="10" Grid.Column="0" Grid.Row="1">
+                <Border Background="#FF49ADFF" CornerRadius="20" Margin="10" Grid.Column="0" Grid.Row="1">
                         <Grid>
                             <DataGrid Margin="20 10 20 5" Grid.Row="0"  AutoGenerateColumns="False" x:Name="ChoseConsumprionDataGrid" RowStyle="{DynamicResource DataGridRowStyle1}"  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}">
                                 <DataGrid.Columns>
@@ -97,7 +101,7 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="Число поставщиков:" Style="{StaticResource TextBlockStyle}" VerticalAlignment="Center" Foreground="White" />
-                <TextBox  FontSize="24" HorizontalAlignment="Right" Width="300" x:Name="CountVendorsTB" TextChanged="CountVendorsTB_TextChanged">
+                <TextBox  FontSize="24" HorizontalAlignment="Right" PreviewTextInput="CountVendorsTB_PreviewTextInput" Width="300" KeyDown="CountVendorsTB_KeyDown" x:Name="CountVendorsTB" LostFocus="CountVendorsTB_LostFocus">
                     <TextBox.Style>
                         <Style BasedOn="{StaticResource RoundedTextBox}" TargetType="TextBox">
                             <Style.Triggers>
@@ -110,13 +114,13 @@
                 </TextBox>
 
 
-                <Border  Background="#FFFFFFFF" Margin="10 4 10 4" CornerRadius="5" BorderBrush="#FFABADB3" BorderThickness="1" Grid.Column="2">
+                <Border  Background="#FFFFFFFF" Margin="10 4 60 4" CornerRadius="5" BorderBrush="#FFABADB3" BorderThickness="1" Grid.Column="2">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="30"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <TextBox Margin="0" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}"  FontSize="24" Name="SearchVendorTB" Grid.Column="1"/>
+                        <TextBox Margin="0" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}"  FontSize="24" Name="SearchVendorTB" Grid.Column="1" TextChanged="SearchVendorTB_TextChanged"/>
                         <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
                     </Grid>
                 </Border>

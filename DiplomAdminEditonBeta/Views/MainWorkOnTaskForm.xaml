@@ -25,10 +25,10 @@
             <StackPanel  Grid.Row="0">
                 <RadioButton Content="Поставщики и заказчики" Name="VendorsAndConsumersRB" IsChecked="True" Style="{StaticResource RadioButtonMenu}" Checked="VendorsAndConsumersRB_Checked" />
                 <RadioButton Content="Пункты снабжения" Name="PointsRB" Style="{StaticResource RadioButtonMenu}" IsEnabled="False"  Checked="PointsRB_Checked"/>
-                <RadioButton Content="Ограничения" Name="ConstrainRB" Style="{StaticResource RadioButtonMenu}" Checked="ConstrainRB_Checked" IsEnabled="True"/>
+                <RadioButton Content="Ограничения" Name="ConstrainRB" Style="{StaticResource RadioButtonMenu}" Checked="ConstrainRB_Checked" IsEnabled="False"/>
                 <RadioButton Content="Услуги и перевозчики" Name="CarriersRB" Style="{StaticResource RadioButtonMenu}" Checked="CarriersRB_Checked" />
                 <RadioButton Content="Тарифы и пункты" Name="TarifsRB" Style="{StaticResource RadioButtonMenu}" Checked="TarifsRB_Checked" IsEnabled="False"/>
-                <RadioButton Content="Вывод" Name="ConclusionRB" Style="{StaticResource RadioButtonMenu}" Checked="ConclusionRB_Checked" IsEnabled="False"/>
+                <RadioButton Content="Вывод" Name="ConclusionRB" Style="{StaticResource RadioButtonMenu}" Checked="ConclusionRB_Checked" IsEnabled="True"/>
             </StackPanel>
 
             <Grid Height="40" VerticalAlignment="Bottom" Margin="0 0 0 10" Grid.Row="1" MouseDown="Grid_MouseDown">

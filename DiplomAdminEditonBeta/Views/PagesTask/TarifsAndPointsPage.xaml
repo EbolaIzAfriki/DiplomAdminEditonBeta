@@ -20,7 +20,7 @@
         </ControlTemplate>
         
         <ControlTemplate x:Key="TexBoxTemplateForLV">
-            <TextBox VerticalAlignment="Center" Text="{Binding Value}" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" FontSize="18" Margin="20 5 20 5" MinWidth="100" Width="150" TextAlignment="Center">
+            <TextBox VerticalAlignment="Center" Text="{Binding Value}" LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" PreviewTextInput="TextBox_PreviewTextInput" FontSize="18" Margin="20 5 20 5" MinWidth="100" Width="150" TextAlignment="Center">
                 <TextBox.Style>
                     <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource RoundedTextBox}">
                         <Style.Triggers>

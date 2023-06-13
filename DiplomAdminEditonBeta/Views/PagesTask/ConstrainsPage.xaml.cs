@@ -1,17 +1,10 @@
-﻿using System;
+﻿using DiplomAdminEditonBeta.TCPModels;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DiplomAdminEditonBeta.Views.PagesTask
 {
@@ -28,80 +21,116 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         private void ButtonAddConstrain_Click(object sender, RoutedEventArgs e)
         {
-           /* Constraint сonstraint = new Constraint() { Task = MainWorkOnTaskForm.DBTask, TypeConstraint = DiplomBetaDBEntities.GetContext().TypeConstraint.First(), ProductCount = 0};
+            TCPMessege tCPMessege = new TCPMessege(3, 9, MainWorkOnTaskForm.DBTask.Id);
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            if (tCPMessege == null)
+            {
+                MainForm.ReturnToAutorization();
+                return;
+            }
+            Constraint сonstraint = JsonConvert.DeserializeObject<Constraint>(tCPMessege.Entity);
             MainWorkOnTaskForm.DBTask.Constraint.Add(сonstraint);
             UpdateList();
-            DiplomBetaDBEntities.GetContext().Constraint.Add(сonstraint);
-            DiplomBetaDBEntities.GetContext().SaveChanges();*/
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            /*Button cmd = (Button)sender;
-            DiplomBetaDBEntities.GetContext().Constraint.Remove((Constraint)cmd.DataContext);
-            DiplomBetaDBEntities.GetContext().SaveChanges();
-            UpdateList();*/
+            Button cmd = (Button)sender;
+            Constraint constraint = (Constraint)cmd.DataContext;
+            TCPMessege tCPMessege = new TCPMessege(5, 9, constraint.Id);
+            if (!ClientTCP.SendMessege(tCPMessege))
+            {
+                MainForm.ReturnToAutorization();
+                return;
+            }
+            MainWorkOnTaskForm.DBTask.Constraint.Remove(constraint);
+            UpdateList();
         }
 
-        private void UpdateList()
+        public void UpdateList()
         {
             ListBoxConstrain.ItemsSource = null;
             ListBoxConstrain.ItemsSource = MainWorkOnTaskForm.DBTask.Constraint.ToList();
         }
         private void ComboBoxVendors_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
+            if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
                 return;
-
             Constraint constraint = (Constraint)(sender as ComboBox).DataContext;
-            if(constraint.IdPoints == null)
+            Point point = (sender as ComboBox).SelectedItem as Point;
+            TCPMessege tCPMessege = new TCPMessege(42, 9, new List<int> { constraint.Id, point.Position});
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            if (tCPMessege == null)
             {
-                constraint.IdPoints = ((sender as ComboBox).SelectedItem as Point).Position + "&" + "-1";
+                MainForm.ReturnToAutorization();
+                return;
             }
-            else
+            if (tCPMessege == null)
             {
-                List<string> ListPoints = constraint.IdPoints.Split('&').ToList();
-                ListPoints[0] = ((sender as ComboBox).SelectedItem as Point).Position.ToString();
-                constraint.IdPoints = ListPoints[0] + "&" + ListPoints[1];
+                MainForm.ReturnToAutorization();
+                return;
             }
-            DiplomBetaDBEntities.GetContext().SaveChanges();*/
+            constraint.IdPoints = tCPMessege.Entity;
         }
 
         private void ComboBoxConsumers_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
+            if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
                 return;
-
             Constraint constraint = (Constraint)(sender as ComboBox).DataContext;
-            if (constraint.IdPoints == null)
-            {
-                constraint.IdPoints = "-1" + "&" + ((sender as ComboBox).SelectedItem as Point).Position;
-            }
-            else
-            {
-                List<string> ListPoints = constraint.IdPoints.Split('&').ToList();
-                ListPoints[1] = ((sender as ComboBox).SelectedItem as Point).Position.ToString();
-                constraint.IdPoints = ListPoints[0] + "&" + ListPoints[1];
-            }
-            DiplomBetaDBEntities.GetContext().SaveChanges();*/
+            Point point = (sender as ComboBox).SelectedItem as Point;
+            TCPMessege tCPMessege = new TCPMessege(43, 9, new List<int> { constraint.Id, point.Position });
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            constraint.IdPoints = tCPMessege.Entity;
         }
 
         private void ComboBoxConstrain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
+            if (!(sender as ComboBox).IsMouseOver || (sender as ComboBox).SelectedItem == null)
                 return;
 
             Constraint constraint = (Constraint)(sender as ComboBox).DataContext;
-            constraint.TypeConstraint = (sender as ComboBox).SelectedItem as TypeConstraint;
-            DiplomBetaDBEntities.GetContext().SaveChanges();*/
+            TypeConstraint typeConstraint = (sender as ComboBox).SelectedItem as TypeConstraint;
+
+            TCPMessege tCPMessege = new TCPMessege(41, 9, new List<int> {constraint.Id, typeConstraint.Id});
+            if (!ClientTCP.SendMessege(tCPMessege))
+            {
+                MainForm.ReturnToAutorization();
+                return;
+            }
+
+            constraint.TypeConstraint = typeConstraint;
         }
 
-        private void TextBoxCount_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBoxCount_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
-            /*TextBox textBox = sender as TextBox;
+            e.Handled = "0123456789".IndexOf(e.Text) < 0;
+        }
+
+        private void TextBoxCount_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
             Constraint constraint = (Constraint)textBox.DataContext;
-            constraint.ProductCount = int.Parse(textBox.Text);
-            DiplomBetaDBEntities.GetContext().SaveChanges();*/
+            int CountPro = int.Parse(textBox.Text);
+            if (CountPro == 0)
+                return;
+            TCPMessege tCPMessege = new TCPMessege(44, 9, new List<int> { constraint.Id, CountPro });
+            if (!ClientTCP.SendMessege(tCPMessege))
+            {
+                MainForm.ReturnToAutorization();
+                return;
+            }
+            constraint.ProductCount = CountPro;
+        }
+
+        private void TextBoxCount_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TextBox textBox = sender as TextBox;
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(textBox), null);
+                Keyboard.ClearFocus();
+            }
         }
     }
 }

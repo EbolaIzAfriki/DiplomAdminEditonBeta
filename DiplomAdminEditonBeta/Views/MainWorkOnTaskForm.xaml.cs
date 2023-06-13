@@ -1,17 +1,10 @@
 ﻿using DiplomAdminEditonBeta.Views.PagesTask;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using DiplomAdminEditonBeta.TCPModels;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace DiplomAdminEditonBeta.Views
 {
@@ -24,19 +17,15 @@ namespace DiplomAdminEditonBeta.Views
         public MainForm MainForm;
 
         public static Task DBTask = null;
-        public MainWorkOnTaskForm(MainForm mainForm, Task task)
+        private int PositionTask;
+        public MainWorkOnTaskForm(MainForm mainForm, Task task, int positionTask)
         {
-            /*DBTask = task;
+            DBTask = task;
             NeedServisesAndChoseCarrierPage = new NeedServisesAndChoseCarrierPage();
             CreateConstrainPage = new ConstrainsPage();
-            if (DBTask.User == null)
-            {
-                DBTask.User = MainForm.CurrentUser;
-                DiplomBetaDBEntities.GetContext().SaveChanges();
-            }
-*/
+            PositionTask = positionTask;
             InitializeComponent();
-
+            mainWorkStaticForm = this;
             MainForm = mainForm;
             VendorsAndConsumptionsPage.IsModificate = true;
 
@@ -46,41 +35,60 @@ namespace DiplomAdminEditonBeta.Views
 
             StatusTB.Text = "Статус: " + DBTask.Status.Name;
 
-            mainWorkStaticForm = this;
             MainFrame.Content = VendorsAndConsumptionsPage;
             StageTB.Text = "Этап 1: Добавление участников транспортной задачи";
+
             if (DBTask.TransportationCost.Count != 0)
             {
                 if (DBTask.Conclusion != "")
                     ConclusionPage.ConclusionTB.Text = DBTask.Conclusion;
                 int Counter = 0;
-                for (int i = 0; i < DBTask.CountRow; i++)
+                for (int i = 0; i < VendorsAndConsumptionsPage.CountVendors; i++)
                 {
-                    for (int j = 0; j < DBTask.CountColumn; j++)
+                    for (int j = 0; j < VendorsAndConsumptionsPage.CountConsumptions; j++)
                     {
+                        if (DBTask.TransportationCost.ToList().Count == Counter)
+                            return;
                         if (DBTask.TransportationCost.ToList()[Counter].Value == 0)
                         {
-                            ConclusionRB.IsEnabled = false;
+                            TarifsAndPointsPage.IsAllTarifFill = false;
                             return;
                         }
                         Counter++;
                     }
                 }
-                ConclusionRB.IsEnabled = true;
+                TarifsAndPointsPage.IsAllTarifFill = true;
             }
-
         }
 
-        public MainWorkOnTaskForm(MainForm mainForm)
+    public MainWorkOnTaskForm(MainForm mainForm)
         {
             InitializeComponent();
             MainForm = mainForm;
+            mainWorkStaticForm = this;
+            TCPMessege tCPMessege = new TCPMessege(3, 4, mainForm.CurrentUser.Id);
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            if (tCPMessege == null)
+            {
+                MainForm.ReturnToAutorization();
+                return;
+            }
+            if (tCPMessege.CodeOperation == 0)
+            {
+                MessageBox.Show("При создании задачи произошла ошибка: " + JsonConvert.DeserializeObject<string>(tCPMessege.Entity), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+                return;
+            }
+            DBTask = JsonConvert.DeserializeObject<Task>(tCPMessege.Entity);
+            RequestPage.tasks.Add(DBTask);
+            PositionTask = RequestPage.tasks.Count()-1;
+            CreateConstrainPage = new ConstrainsPage();
+            StatusTB.Text = "Статус: " + DBTask.Status.Name;
 
             PointsPage = new PointsPage(this);
             VendorsAndConsumptionsPage = new VendorsAndConsumptionsPage(PointsPage, this);
             TarifsAndPointsPage = new TarifsAndPointsPage(this);
 
-            mainWorkStaticForm = this;
             MainFrame.Content = VendorsAndConsumptionsPage;
             StageTB.Text = "Этап 1: Добавление участников транспортной задачи";
             NeedServisesAndChoseCarrierPage = new NeedServisesAndChoseCarrierPage();
@@ -134,6 +142,7 @@ namespace DiplomAdminEditonBeta.Views
         {
             if (MainFrame == null)
                 return;
+            CreateConstrainPage.UpdateList();
             MainFrame.Content = CreateConstrainPage;
             StageTB.Text = "Этап 3: Настройка ограничений";
         }
@@ -142,6 +151,7 @@ namespace DiplomAdminEditonBeta.Views
         {
             if (MainFrame == null)
                 return;
+            PointsPage.UpdateDataGrid();
             MainFrame.Content = PointsPage;
             StageTB.Text = "Этап 2: Настройка пунктов снабжения и потребления";
         }
@@ -152,9 +162,31 @@ namespace DiplomAdminEditonBeta.Views
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
+        {           
+            if (ClientTCP.IsConnected == false)
+            {
+                return;
+            }
+
             MainForm.Visibility = Visibility.Visible;
-            MainForm.RequestPage.UpdateTaskList();
+            int statusId;
+            if (DBTask.Conclusion == null)
+                statusId = 1;
+            else
+                statusId = 2;
+
+            TCPMessege tCPMessege = new TCPMessege(4, 10, new List<int> { DBTask.Id, statusId });
+            tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+            if (tCPMessege == null)
+            {
+                mainWorkStaticForm = null;
+                MainForm.ReturnToAutorization();
+                return;
+            }
+            Status status = JsonConvert.DeserializeObject<Status>(tCPMessege.Entity);
+            DBTask.Status = status;
+            RequestPage.tasks[PositionTask] = DBTask;
+            MainForm.RequestPage.UpdateTasksFromList();
             DBTask = null;
         }
     }

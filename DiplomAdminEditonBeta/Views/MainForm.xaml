@@ -23,7 +23,7 @@
             </Grid.RowDefinitions>
             <StackPanel  Grid.Row="0">
                 <RadioButton Content="Клиенты" Name="ClientsRB" IsChecked="True" Style="{StaticResource RadioButtonMenu}" Checked="ClientsRB_Checked"/>
-                <RadioButton Content="Поставщики" Name="CarriersRB" Style="{StaticResource RadioButtonMenu}" Checked="CarriersRB_Checked"/>
+                <RadioButton Content="Перевозчики" Name="CarriersRB" Style="{StaticResource RadioButtonMenu}" Checked="CarriersRB_Checked"/>
                 <RadioButton Content="Заявки" Name="RequestsRB" Style="{StaticResource RadioButtonMenu}" Checked="RequestsRB_Checked"/>
             </StackPanel>
 

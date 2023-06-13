@@ -24,16 +24,15 @@ namespace DiplomAdminEditonBeta
         public virtual Task Task { get; set; }
         public virtual TypeConstraint TypeConstraint { get; set; }
 
-        /*
         public List<TypeConstraint> typeConstraints
         {
             get
             {
-                return DiplomBetaDBEntities.GetContext().TypeConstraint.ToList();
+                return TypeConstraint.typeConstraints.ToList();
             }
         }
 
-        */
+
 
         public List<Point> PointsVendors
         {
@@ -58,7 +57,7 @@ namespace DiplomAdminEditonBeta
                 if (IdPoints == null)
                     return null;
                 int id = int.Parse(IdPoints.Split('&')[0]);
-                return Task.Point.First(p => p.Position == id && p.Client.TypeId == 2);
+                return Task.Point.FirstOrDefault(p => p.Position == id && p.Client.TypeId == 2);
             }
         }
 
@@ -69,7 +68,7 @@ namespace DiplomAdminEditonBeta
                 if (IdPoints == null)
                     return null;
                 int id = int.Parse(IdPoints.Split('&')[1]);
-                return Task.Point.First(p => p.Position == id && p.Client.TypeId == 1);
+                return Task.Point.FirstOrDefault(p => p.Position == id && p.Client.TypeId == 1);
             }
         }
     }

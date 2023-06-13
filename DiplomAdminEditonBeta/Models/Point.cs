@@ -23,19 +23,17 @@ namespace DiplomAdminEditonBeta
         public int IdTask { get; set; }
         public int Position { get; set; }
         public string Address { get; set; }
-    
         public virtual Client Client { get; set; }
         public virtual Task Task { get; set; }
 
-        /*
-        public string[] clientsList
+        public List<Client> clientsList
         {
             get
             {
-                string[] vs = (string[])VendorsAndConsumptionsPage.ChosedClient.Where(p => p.TypeId == Client.TypeId).Select(d => d.CompanyName).ToArray().Clone();
-                return vs;
+                if (VendorsAndConsumptionsPage.ChosedClient == null)
+                    return null;
+                return (List<Client>)VendorsAndConsumptionsPage.ChosedClient.Where(p => p.TypeId == Client.TypeId).ToList();
             }
         }
-        */
     }
 }

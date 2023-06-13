@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SimpleTCP;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DiplomAdminEditonBeta.TCPModels
 {
@@ -28,6 +25,11 @@ namespace DiplomAdminEditonBeta.TCPModels
             try
             {
                 var eM = client.WriteLineAndGetReply(JsonConvert.SerializeObject(tCPMessege), new TimeSpan(0, 0, 15));
+                if(eM == null)
+                {
+                    IsConnected = false;
+                    return null;
+                }
                 var msg = Encoding.UTF8.GetString(eM.Data);
                 return JsonConvert.DeserializeObject<TCPMessege>(msg);
             }
@@ -37,9 +39,17 @@ namespace DiplomAdminEditonBeta.TCPModels
             }
         }
 
-        public static void SendMessege(TCPMessege tCPMessege)
+        public static bool SendMessege(TCPMessege tCPMessege)
         {
-            client.WriteLine(JsonConvert.SerializeObject(tCPMessege));
+            try
+            {
+                client.WriteLine(JsonConvert.SerializeObject(tCPMessege));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

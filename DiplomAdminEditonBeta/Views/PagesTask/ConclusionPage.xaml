@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:DiplomAdminEditonBeta.Views.PagesTask"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ConclusionPage" Loaded="Page_Loaded">
+      Title="ConclusionPage">
 
     <Grid>
         <TextBlock x:Name="ConclusionTB" Style="{StaticResource TextBlockStyle}"  TextWrapping="Wrap" Foreground="White" LineStackingStrategy="BlockLineHeight" LineHeight="30" FontSize="18"/>

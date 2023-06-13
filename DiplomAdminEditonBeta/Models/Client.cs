@@ -9,6 +9,7 @@
 
 namespace DiplomAdminEditonBeta
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -25,7 +26,6 @@ namespace DiplomAdminEditonBeta
         public string Address { get; set; }
         public string Email { get; set; }
         public Nullable<int> TypeId { get; set; }
-    
         public virtual TypeClient TypeClient { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Point> Point { get; set; }

@@ -33,10 +33,14 @@
                                 <ColumnDefinition MaxWidth="30"/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <TextBox Margin="0" FontSize="20" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" x:Name="SearchTB" Grid.Column="1"/>
+                            <TextBox Margin="0" FontSize="20" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" x:Name="SearchTB" Grid.Column="1" TextChanged="SearchTB_TextChanged"/>
                             <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
                         </Grid>
                     </Border>
+
+                    <Button Grid.Column="0" HorizontalAlignment="Right" x:Name="RefreshList" Click="RefreshList_Click">
+                        <Image Source="/Иконки/RefreshIcon.png"/>
+                    </Button>
 
                     <TextBlock Text="Текущий поставщик: " Grid.Column="1" Style="{StaticResource TextBlockStyle}" Name="CurrentCarrierTB"  VerticalAlignment="Center" Foreground="White" Margin="95 15 0 5"/>
                 </Grid>

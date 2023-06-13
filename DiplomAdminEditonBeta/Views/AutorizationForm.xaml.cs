@@ -1,19 +1,7 @@
 ﻿using DiplomAdminEditonBeta.TCPModels;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DiplomAdminEditonBeta
 {
@@ -26,7 +14,6 @@ namespace DiplomAdminEditonBeta
         {
             InitializeComponent();
         }
-
         private void EntryButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -45,6 +32,8 @@ namespace DiplomAdminEditonBeta
             tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
             if(tCPMessege == null)
             {
+                MessageBox.Show("Сервер не отвечает!");
+                ClientTCP.IsConnected = false;
                 return;
             }
             if(tCPMessege.CodeOperation == 0)
@@ -52,10 +41,20 @@ namespace DiplomAdminEditonBeta
                 MessageBox.Show("Неверно введен логин или пароль!");
                 return;
             }
-            MainForm mainForm = new MainForm();
-            MainForm.CurrentUser = JsonConvert.DeserializeObject<User>(tCPMessege.Entity);
+            if(tCPMessege.CodeOperation == -1)
+            {
+                MessageBox.Show("Пользователь уже авторизован в системе!");
+                return;
+            }
+            User user = JsonConvert.DeserializeObject<User>(tCPMessege.Entity);
+            MainForm mainForm = new MainForm(user);
             mainForm.Show();
             Close();
+        }
+
+        private void PasswordTB_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            TBPS.Text = PasswordTB.Password;
         }
     }
 }

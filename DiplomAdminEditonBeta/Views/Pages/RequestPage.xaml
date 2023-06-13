@@ -25,12 +25,14 @@
                     <ColumnDefinition MaxWidth="30"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBox Margin="2" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" Name="SearchTB" Grid.Column="1"/>
+                <TextBox Margin="2" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" Name="SearchTB" Grid.Column="1" TextChanged="SearchTB_TextChanged"/>
                 <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
             </Grid>
         </Border>
-
-        <Button Content="Создать новую задачу" Grid.Column="1"  x:Name="AddTaskBut" Margin="150 15 20 5" Click="AddTaskBut_Click" />
+            <Button Grid.Column="0" HorizontalAlignment="Right" x:Name="RefreshList" Click="RefreshList_Click">
+                <Image Source="/Иконки/RefreshIcon.png"/>
+            </Button>
+            <Button Content="Создать новую задачу" Grid.Column="1"  x:Name="AddTaskBut" Margin="150 15 20 5" Click="AddTaskBut_Click" />
     </Grid>
 
 
@@ -46,7 +48,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Создатель" Binding="{Binding User.Login,  UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"  Width="0.7*"/>
+                <DataGridTextColumn Header="Создатель" Binding="{Binding User.Login}" IsReadOnly="True"  Width="*"/>
                 <DataGridTemplateColumn  Width="0.5*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

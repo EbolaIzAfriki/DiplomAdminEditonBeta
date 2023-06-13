@@ -29,15 +29,41 @@
                         <TextBox x:Name="LoginTB" Style="{StaticResource RoundedTextBox}"/>
                         <TextBlock Text="Пароль:" Style="{StaticResource TextBlockStyle}" />
                         <StackPanel>
-                            <PasswordBox x:Name="PasswordTB"  Margin="5" FontFamily="Fonts/golos-ui_regular.ttf #Golos UI" FontSize="16">
-                            <PasswordBox.Template>
-                                <ControlTemplate  TargetType="{x:Type PasswordBox}">
-                                    <Border Background="{TemplateBinding Background}" x:Name="Bd" BorderBrush="#FFABADB3" BorderThickness="1" CornerRadius="5">
-                                        <ScrollViewer Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
-                                    </Border>
-                                </ControlTemplate>
-                            </PasswordBox.Template>
-                        </PasswordBox>
+                            <Grid>
+                                <TextBox Style="{StaticResource RoundedTextBox}" IsReadOnly="True" Margin="5"/>
+                                <PasswordBox x:Name="PasswordTB" PasswordChanged="PasswordTB_PasswordChanged"  Margin="5" FontFamily="Fonts/golos-ui_regular.ttf #Golos UI" FontSize="16">
+                                    <PasswordBox.Template>
+                                        <ControlTemplate  TargetType="{x:Type PasswordBox}">
+                                            <Border Background="{TemplateBinding Background}" x:Name="Bd" BorderBrush="#FFABADB3" BorderThickness="1" CornerRadius="5">
+                                                <ScrollViewer Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                                            </Border>
+                                        </ControlTemplate>
+                                    </PasswordBox.Template>
+                                    <PasswordBox.Style>
+                                        <Style  TargetType="PasswordBox">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=ForgetPasswordTB}" Value="True">
+                                                    <Setter Property="Visibility" Value="Hidden"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </PasswordBox.Style>
+                                </PasswordBox>
+                                <TextBlock Name="TBPS" VerticalAlignment="Center" Margin="8 0">
+                                    <TextBlock.Style>
+                                        <Style BasedOn="{StaticResource TextBlockStyle}" TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Hidden"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsMouseOver, ElementName=ForgetPasswordTB}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+
                         <TextBlock  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0 0 5 0" FontSize="14" Name="ForgetPasswordTB" Style="{StaticResource TextBlockStyle}">
                         <Hyperlink> Показать пароль </Hyperlink>
                         </TextBlock>

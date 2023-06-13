@@ -9,8 +9,8 @@
       d:DesignHeight="469" d:DesignWidth="794" MinHeight="469" MinWidth="794"
       Title="Page1">
     <Page.Resources>
-        
-        
+
+
     </Page.Resources>
     <Grid Background="#FF49ADFF">
         <Grid.RowDefinitions>
@@ -29,11 +29,13 @@
                         <ColumnDefinition MaxWidth="30"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Margin="2" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" TextChanged="SearchTB_TextChanged" Name="SearchTB" Grid.Column="1"/>
+                    <TextBox Margin="2,2,2,0" BorderBrush="{x:Null}" Style="{StaticResource TextBoxStyle}" TextChanged="SearchTB_TextChanged" Name="SearchTB" Grid.Column="1" Height="22" VerticalAlignment="Top"/>
                     <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
                 </Grid>
             </Border>
-
+            <Button Grid.Column="0" HorizontalAlignment="Right" x:Name="RefreshList" Click="RefreshList_Click">
+                <Image Source="/Иконки/RefreshIcon.png"/>
+            </Button>
             <Button Content="Добавить клиента" Grid.Column="1"  x:Name="AddBut" Click="AddBut_Click" Margin="150 15 20 5" />
         </Grid>
 

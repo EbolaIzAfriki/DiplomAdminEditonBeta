@@ -28,11 +28,10 @@ namespace DiplomAdminEditonBeta
         public int StatusId { get; set; }
         public Nullable<int> Cost { get; set; }
         public string Conclusion { get; set; }
-        public Nullable<int> CountRow { get; set; }
-        public Nullable<int> CountColumn { get; set; }
         public Nullable<int> UserId { get; set; }
         public Nullable<int> CarrierId { get; set; }
-    
+        public Nullable<int> CountRow { get; set; }
+        public Nullable<int> CountColumn { get; set; }
         public virtual Carrier Carrier { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Point> Point { get; set; }
@@ -63,6 +62,16 @@ namespace DiplomAdminEditonBeta
                     s += "\n" + r;
                 }
                 return s;
+            }
+        }
+
+        public string CarrierName
+        {
+            get
+            {
+                if (Carrier == null)
+                    return "";
+                return Carrier.Name;
             }
         }
     }

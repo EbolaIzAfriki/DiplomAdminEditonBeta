@@ -9,6 +9,7 @@
 
 namespace DiplomAdminEditonBeta
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -18,7 +19,7 @@ namespace DiplomAdminEditonBeta
         public int IdTask { get; set; }
         public int Value { get; set; }
         public int Id { get; set; }
-    
+        [JsonIgnore]
         public virtual Task Task { get; set; }
     }
 }

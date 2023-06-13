@@ -14,7 +14,6 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-
         <Border Background="#FF49ADFF" CornerRadius="20" Margin="10">
             <Grid>
                 <Grid.RowDefinitions>
@@ -38,7 +37,9 @@
                             <Image Source="/Иконки/discover.png" HorizontalAlignment="Left" Margin="5 0 0 0"/>
                         </Grid>
                     </Border>
-
+                    <Button Grid.Column="0" HorizontalAlignment="Right" x:Name="RefreshList" Click="RefreshList_Click">
+                        <Image Source="/Иконки/RefreshIcon.png"/>
+                    </Button>
                     <Button Content="Добавить перевозчика" Grid.Column="1"  x:Name="AddBut" Click="AddBut_Click" Margin="150 15 20 5"/>
                 </Grid>
 

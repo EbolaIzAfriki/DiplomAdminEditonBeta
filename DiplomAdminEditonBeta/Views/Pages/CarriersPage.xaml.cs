@@ -24,12 +24,13 @@ namespace DiplomAdminEditonBeta
     /// </summary>
     public partial class CarriersPage : Page
     {
-        private List<Service> Services, AllServices;
-        public List<Carrier> Carriers;
-        public CarriersPage()
+        public static List<Service> Services, AllServices;
+        public static List<Carrier> Carriers;
+        private MainForm MainForm;
+        public CarriersPage(MainForm mainForm)
         {
             InitializeComponent();
-
+            MainForm = mainForm;
             TCPMessege tCPMessege = new TCPMessege(1, 35, null);
             tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
             if (tCPMessege == null)
@@ -92,18 +93,27 @@ namespace DiplomAdminEditonBeta
                 if (CarriersDataGrid.SelectedItem == null)
                     return;
                 Carrier carrier = CarriersDataGrid.SelectedItem as Carrier;
-                if (MessageBox.Show($"Вы действительно хотите удалить перевозчика {carrier.Name}?", "Удаление клиента", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                if (MessageBox.Show($"Вы действительно хотите удалить перевозчика {carrier.Name}?", "Удаление перевозчика", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 {
                     return;
                 }
 
-
-                TCPMessege tCPMessege = new TCPMessege(5, 3, carrier);
-                ClientTCP.SendMessege(tCPMessege);
-
+                TCPMessege tCPMessege = new TCPMessege(5, 3, carrier.Id);
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                if (tCPMessege == null)
+                {
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                if (tCPMessege.CodeOperation == 0)
+                {
+                    MessageBox.Show("Данный перевозчик еще используется в задачах!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 Carriers.Remove(carrier);
                 UpdateCarriersDatagridFromList();
                 ClearServiseDG();
+                MainForm.RequestPage.UpdateTaskList();
             }
             catch (Exception ex)
             {
@@ -117,7 +127,6 @@ namespace DiplomAdminEditonBeta
         {
             Services = AllServices.ToList();
             StaticServiceDataGrid.ItemsSource = null;
-            StaticServiceDataGrid.ItemsSource = Services;
             ServiceDataGrid.ItemsSource = null;
         }
 
@@ -130,23 +139,114 @@ namespace DiplomAdminEditonBeta
                 if (CarriersDataGrid.SelectedItem == null)
                     return;
                 Carrier carrier = CarriersDataGrid.SelectedItem as Carrier;
-                carrier.Name = carrier.Name.Trim();
-                carrier.Address = carrier.Address.Trim();
-                carrier.Email = carrier.Email.Trim();
 
-                TCPMessege tCPMessege = new TCPMessege(4, 3, carrier);
-                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
-
-                if (tCPMessege.CodeOperation > 0)
+                if (CarriersDataGrid.CurrentCell.Column == null)
+                    return;
+                int indexColumn = CarriersDataGrid.CurrentCell.Column.DisplayIndex;
+                string value = "";
+                position = Carriers.IndexOf(carrier);
+                switch (indexColumn)
                 {
-                    position = Carriers.IndexOf(carrier);
+                    case 1:
+                        {
+                            carrier.Name = carrier.Name.Trim(' ');
+                            if (string.IsNullOrEmpty(carrier.Name))
+                            {
+                                carrier.Name = string.Empty;
+                                UpdateCarriersDatagridFromList();
+                                CarriersDataGrid.SelectedIndex = position;
+                                MessageBox.Show("Строка пуста!!!");
+                                return;
+                            }
+                            value = carrier.Name;
+                            break;
+                        }
+                    case 2:
+                        {
+                            carrier.Address = carrier.Address.Trim(' ');
+                            if (string.IsNullOrEmpty(carrier.Address))
+                            {
+                                carrier.Address = string.Empty;
+                                UpdateCarriersDatagridFromList();
+                                CarriersDataGrid.SelectedIndex = position;
+                                MessageBox.Show("Строка пуста!!!");
+                                return;
+                            }
+                            value = carrier.Address;
+                            break;
+                        }
+                    case 3:
+                        {
+                            carrier.Phone = carrier.Phone.Trim(' ');
+                            if (string.IsNullOrEmpty(carrier.Name))
+                            {
+                                carrier.Phone = string.Empty;
+                                UpdateCarriersDatagridFromList();
+                                CarriersDataGrid.SelectedIndex = position;
+                                MessageBox.Show("Строка пуста!!!");
+                                return;
+                            }
+                            value = carrier.Phone;
+                            break;
+                        }
+                    case 4:
+                        {
+                            carrier.Email = carrier.Email.Trim(' ');
+                            if (string.IsNullOrEmpty(carrier.Name))
+                            {
+                                carrier.Email = string.Empty;
+                                UpdateCarriersDatagridFromList();
+                                CarriersDataGrid.SelectedIndex = position;
+                                MessageBox.Show("Строка пуста!!!");
+                                return;
+                            }
+                            value = carrier.Email;
+                            break;
+                        }
                 }
-                else
+                TCPMessege tCPMessege = new TCPMessege(4, 3, new List<string> { carrier.Id.ToString(), indexColumn.ToString(), value });
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                if (tCPMessege == null)
+                {
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                if (tCPMessege.CodeOperation == -1)
+                {
+                    MessageBox.Show("Этот перевозчик был удален!!!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    UpdateDataGrid();
+                    ClearServiseDG();
+                    position = -1;
+                }
+                if (tCPMessege.CodeOperation == 0)
                 {
                     List<string> vs = JsonConvert.DeserializeObject<List<string>>(tCPMessege.Entity);
                     MessageBox.Show("При изменении произошла ошибка: " + vs[0]);
                     position = Carriers.IndexOf(carrier);
-                    Carriers[position] = JsonConvert.DeserializeObject<Carrier>(vs[1]);
+                    vs = JsonConvert.DeserializeObject<List<string>>(vs[1]);
+                    switch (int.Parse(vs[1]))
+                    {
+                        case 1:
+                            {
+                                Carriers[position].Name = vs[2];
+                                break;
+                            }
+                        case 2:
+                            {
+                                Carriers[position].Address = vs[2];
+                                break;
+                            }
+                        case 3:
+                            {
+                                Carriers[position].Phone = vs[2];
+                                break;
+                            }
+                        case 4:
+                            {
+                                Carriers[position].Email = vs[2];
+                                break;
+                            }
+                    }
                     UpdateCarriersDatagridFromList();
                 }
                 dispatcherTimer.Tick += Timertick;
@@ -196,7 +296,19 @@ namespace DiplomAdminEditonBeta
                 Carrier carrier = (Carrier)CarriersDataGrid.SelectedItem;
 
                 TCPMessege tCPMessege = new TCPMessege(3, 35, new List<int>() { service.Id, carrier.Id });
-                ClientTCP.SendMessege(tCPMessege);
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                if (tCPMessege == null)
+                {
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                if (tCPMessege.CodeOperation == 0)
+                {
+                    MessageBox.Show("Этот перевозчик был удален!!!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    UpdateDataGrid();
+                    ClearServiseDG();
+                    return;
+                }
                 CurrentCarrier.ServiceCarrier.Add(new ServiceCarrier() { Carrier = CurrentCarrier, Cost = 0, Service = service });
 
                 UpdateServicesDataGrids();
@@ -216,9 +328,25 @@ namespace DiplomAdminEditonBeta
                 if (CarriersDataGrid.SelectedItem == null || ServiceDataGrid.SelectedItem == null)
                     return;
                 ServiceCarrier serviceCarrier = ServiceDataGrid.SelectedItem as ServiceCarrier;
-
+                if(serviceCarrier.Service.Id == 1)
+                {
+                    MessageBox.Show("Нельзя удалить базовую услугу перевозки!!!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
                 TCPMessege tCPMessege = new TCPMessege(5, 35, new List<int> { serviceCarrier.Service.Id, serviceCarrier.Carrier.Id });
-                ClientTCP.SendMessege(tCPMessege);
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                if (tCPMessege == null)
+                {
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                if(tCPMessege.CodeOperation == 0)
+                {
+                    MessageBox.Show("Этот перевозчик был удален!!!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    UpdateDataGrid();
+                    ClearServiseDG();
+                    return;
+                }
 
                 CurrentCarrier.ServiceCarrier.Remove(serviceCarrier);
                 UpdateServicesDataGrids();
@@ -253,7 +381,14 @@ namespace DiplomAdminEditonBeta
                 return;
             }
             CarriersDataGrid.ItemsSource = null;
-            CarriersDataGrid.ItemsSource = Carriers.Where(p => p.Name.Contains(SearchTB.Text) || p.Address.Contains(SearchTB.Text) || p.Email.Contains(SearchTB.Text) || p.Phone.Contains(SearchTB.Text));
+            CarriersDataGrid.ItemsSource = Carriers.Where(p => p.Name.ToLower().Contains(SearchTB.Text.ToLower()) || p.Address.ToLower().Contains(SearchTB.Text.ToLower()) || p.Email.ToLower().Contains(SearchTB.Text.ToLower()) || p.Phone.ToLower().Contains(SearchTB.Text.ToLower()));
+        }
+
+        private void RefreshList_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateDataGrid();
+            ClearServiseDG();
+            SearchTB_TextChanged(null, null);
         }
 
         private void ServiceDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -265,8 +400,24 @@ namespace DiplomAdminEditonBeta
                 ServiceCarrier serviceCarrier = ServiceDataGrid.SelectedItem as ServiceCarrier;
                 if (lastCost == serviceCarrier.Cost)
                     return;
+                if (serviceCarrier.Cost < 0)
+                {
+                    serviceCarrier.Cost *= -1;
+                }
                 TCPMessege tCPMessege = new TCPMessege(4, 35, new List<int> { serviceCarrier.Service.Id, serviceCarrier.Carrier.Id, serviceCarrier.Cost });
-                ClientTCP.SendMessege(tCPMessege);
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                if (tCPMessege == null)
+                {
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                if (tCPMessege.CodeOperation == 0)
+                {
+                    MessageBox.Show("Этот перевозчик был удален!!!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    UpdateDataGrid();
+                    ClearServiseDG();
+                    return;
+                }
             }
             catch (Exception ex)
             {

@@ -1,17 +1,10 @@
-﻿using System;
+﻿using DiplomAdminEditonBeta.TCPModels;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DiplomAdminEditonBeta.Views.PagesTask
 {
@@ -25,15 +18,49 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private Random random = new Random();
 
+        private string Check()
+        {
+            string ErrorString = "";
+            if (!VendorsAndConsumptionsPage.IsClientsChose)
+            {
+                ErrorString += "\nКлиенты или число пунктов не выбрано!";
+            }
+            if (!PointsPage.IsAllProductCountFill)
+            {
+                ErrorString += "\nЧисло товаров указано не у всех пунктов!";
+            }
+            if (!NeedServisesAndChoseCarrierPage.IsCarrierChose)
+            {
+                ErrorString += "\nПеревозчик не выбран!";
+            }
+            if (!TarifsAndPointsPage.IsAllTarifFill)
+            {
+                ErrorString += "\nМатрица тарифов заполнена не полностью!";
+            }
+            return ErrorString;
+        }
+        private bool AddAdress = true;
         private void GenerateConlusionBut_Click(object sender, RoutedEventArgs e)
         {
+            string ErrorString = Check();
+            if (ErrorString != "")
+            {
+                ErrorString = ErrorString.Substring(1);
+                MessageBox.Show(ErrorString, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            if (!PointsPage.IsAllAddressFill)
+            {
+                if (MessageBox.Show("У пунктов снабжения не все адреса заполнены, что может привести к неполному выводу. Вы действительно хотите продолжить?", "Предупреджение", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                {
+                    return;
+                }
+                AddAdress = false;
+            }
+
+
             int[,] transpCostM, matrPost, transpCostMn;
             //Матрица булей для определения путей
             bool[,] matrPostB;
@@ -90,7 +117,6 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                 if (sumVend < sumCons)
                 {
                     IsManyItemsVendors = false;
-                    /// ВНИМАНИЕ ТУТ ВОЗМОЖНЫЙ ПРИКОЛ
                     vendors.Add(sumCons - sumVend);
                     row++;
                     transpCostM = new int[row, column];
@@ -152,24 +178,40 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             }
 
             //Работа с ограничениями
-            foreach (Constraint constraint in MainWorkOnTaskForm.DBTask.Constraint.ToList())
+
+            List<Constraint> constraints = MainWorkOnTaskForm.DBTask.Constraint.Select(p => new Constraint() { IdPoints = p.IdPoints, TypeConstraintId = p.TypeConstraintId, ProductCount = p.ProductCount }).ToList();
+
+            foreach (Constraint constraint in constraints)
             {
+                if (constraint.IdPoints == null)
+                    continue;
                 List<string> ListPoints = constraint.IdPoints.Split('&').ToList();
+                if (ListPoints.Contains("-1"))
+                    continue;
                 int IdVendorPoint = int.Parse(ListPoints[0]), IdConsumerPoint = int.Parse(ListPoints[1]);
-                if (constraint.TypeConstraintId == 1)
+
+                int minC = vendors[IdVendorPoint - 1];
+                if (minC > consumers[IdConsumerPoint - 1])
+                {
+                    minC = consumers[IdConsumerPoint - 1];
+                }
+                if (minC < constraint.ProductCount)
+                    constraint.ProductCount = minC;
+
+                if (constraint.TypeConstraintId == 0)
                 {
                     vendors[IdVendorPoint - 1] = (int)(vendors[IdVendorPoint - 1] - constraint.ProductCount);
                     consumers[IdConsumerPoint - 1] = (int)(consumers[IdConsumerPoint - 1] - constraint.ProductCount);
                     continue;
                 }
-                if (constraint.TypeConstraintId == 3)
+                if (constraint.TypeConstraintId == 2)
                 {
                     vendors[IdVendorPoint - 1] = (int)(vendors[IdVendorPoint - 1] - constraint.ProductCount);
                     consumers[IdConsumerPoint - 1] = (int)(consumers[IdConsumerPoint - 1] - constraint.ProductCount);
                     transpCostM[IdVendorPoint - 1, IdConsumerPoint - 1] += MaxTarif*3;
                     continue;
                 }
-                if (constraint.TypeConstraintId == 2)
+                if (constraint.TypeConstraintId == 1)
                 {
                     n = 0;
                     TranspCost.Clear();
@@ -299,6 +341,8 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                 bazis++;
             }
             transpCostM = (int[,])transpCostMn.Clone();
+
+            int badTryFindPotencials = 0;
             restart:
             transpCostMn = (int[,])transpCostM.Clone();
             bool badmark;
@@ -417,6 +461,11 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
                 if (Usb.Contains(false) || Vsb.Contains(false))
                 {
+                    if (badTryFindPotencials == 20)
+                    {
+                        break;
+                    }
+                    badTryFindPotencials++;
                     goto restart;
                 }
 
@@ -547,16 +596,21 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             }
             while (badmark);
 
-            foreach (Constraint constraint in MainWorkOnTaskForm.DBTask.Constraint.Where(p => p.TypeConstraint.Id == 1 || p.TypeConstraint.Id == 3).ToList())
+            foreach (Constraint constraint in constraints.Where(p => p.TypeConstraintId == 0 || p.TypeConstraintId == 2).ToList())
             {
+                if (constraint.IdPoints == null)
+                    continue;
                 List<string> ListPoints = constraint.IdPoints.Split('&').ToList();
+                if (ListPoints.Contains("-1"))
+                    continue;
                 int IdVendorPoint = int.Parse(ListPoints[0]), IdConsumerPoint = int.Parse(ListPoints[1]);
                 matrPost[IdVendorPoint - 1, IdConsumerPoint - 1] += (int)constraint.ProductCount;
-                if (constraint.TypeConstraintId == 3)
+                if (constraint.TypeConstraintId == 2)
                 {
                     transpCostM[IdVendorPoint - 1, IdConsumerPoint - 1] -= MaxTarif*3;
                 }
             }
+
             string UnmetNeedsText = "";
             ConclusionTB.Text = "Для минимальной стоимости перевозки груза необходимо осуществить следующие поставки: \n";
             int Sum = 0, Count = 0, UnSum = 0;
@@ -580,7 +634,14 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                             continue;
                         }
                         Sum += matrPost[i, j] * transpCostM[i, j];
-                        ConclusionTB.Text += $"       осуществить поставку груза из пункта «{CopyVendors[i].Name}» в пункт «{CopyConsumers[j].Name}» в размере {matrPost[i, j]} единиц;\n";
+                        if (AddAdress)
+                        {
+                            ConclusionTB.Text += $"       осуществить поставку груза из пункта «{CopyVendors[i].Name}» по адресу {CopyVendors[i].Address} в пункт «{CopyConsumers[j].Name}» по адресу {CopyConsumers[j].Address} в размере {matrPost[i, j]} единиц;\n";
+                        }
+                        else
+                        {
+                            ConclusionTB.Text += $"       осуществить поставку груза из пункта «{CopyVendors[i].Name}» в пункт «{CopyConsumers[j].Name}» в размере {matrPost[i, j]} единиц;\n";
+                        }
                         Count++;
                     }
                 }
@@ -604,11 +665,17 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             ConclusionTB.Text += $"\n\nНеудовлетворенные потребности: \n" + UnmetNeedsText + "\nОбщая нехватка: " + UnSum;
 
 
-            /*MainWorkOnTaskForm.DBTask.Conclusion = ConclusionTB.Text;
+            MainWorkOnTaskForm.DBTask.Conclusion = ConclusionTB.Text;
             MainWorkOnTaskForm.DBTask.Cost = Sum;
-            MainWorkOnTaskForm.DBTask.Status = DiplomBetaDBEntities.GetContext().Status.ToList()[1];
-            DiplomBetaDBEntities.GetContext().SaveChanges();
-            MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;*/
+            MainWorkOnTaskForm.DBTask.Status.Name = "Обработана";
+            MainWorkOnTaskForm.mainWorkStaticForm.StatusTB.Text = "Статус: " + MainWorkOnTaskForm.DBTask.Status.Name;
+
+            TCPMessege tCPMessege = new TCPMessege(4, 4, new List<string> { MainWorkOnTaskForm.DBTask.Id.ToString(), ConclusionTB.Text, Sum.ToString()});
+            if (!ClientTCP.SendMessege(tCPMessege))
+            {
+                MainForm.ReturnToAutorization();
+                return;
+            }
         }
     }
 }

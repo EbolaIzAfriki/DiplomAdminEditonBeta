@@ -1,18 +1,12 @@
 ﻿using DiplomAdminEditonBeta.Matrix_Models;
-using System;
+using DiplomAdminEditonBeta.TCPModels;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DiplomAdminEditonBeta.Views.PagesTask
 {
@@ -26,13 +20,19 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
         private bool SaveProfile = false;
         public int LastColumns = 0, LastRows = 0;
 
+        public static bool IsAllTarifFill = false;
+
         MainWorkOnTaskForm MainWorkOnTaskForm;
+        private JsonSerializerSettings JsonSettings;
         public TarifsAndPointsPage(MainWorkOnTaskForm mainWorkOnTaskForm)
         {
             InitializeComponent();
+            JsonSettings = new JsonSerializerSettings
+            {
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+            };
             MainWorkOnTaskForm = mainWorkOnTaskForm;
         }
-
         public void UpdateMatrix()
         {
             if (SaveProfile)
@@ -59,8 +59,8 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
 
         public void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-           /* int Counter = 0;
-            bool Flag = true;
+            int Counter = 0;
+            bool Flag = true, IsEnable = true;
             for (int i = 1; i < TarifMatrix.Rows - 1; i++)
             {
                 for (int j = 1; j < TarifMatrix.Columns - 1; j++)
@@ -71,18 +71,23 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                         if (int.Parse(TarifMatrix.Items[position].Value) != transportationCosts[Counter].Value)
                         {
                             transportationCosts[Counter].Value = int.Parse(TarifMatrix.Items[position].Value);
-                            DiplomBetaDBEntities.GetContext().SaveChanges();
+                            TCPMessege tCPMessege = new TCPMessege(4, 8, new List<int>() { transportationCosts[Counter].Id, transportationCosts[Counter].Value});
+                            if (!ClientTCP.SendMessege(tCPMessege))
+                            {
+                                MainForm.ReturnToAutorization();
+                                return;
+                            }
                             Flag = false;
                         }
                     }
                     if(transportationCosts[Counter].Value == 0)
                     {
-                        MainWorkOnTaskForm.ConclusionRB.IsEnabled = false;
+                        IsEnable = false;
                     }
                     Counter++;
                 }
             }
-            MainWorkOnTaskForm.ConclusionRB.IsEnabled = true;*/
+            IsAllTarifFill = IsEnable;
         }
 
         private void TextBox_KeyDown(object sender, KeyEventArgs e)
@@ -93,12 +98,18 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             }
         }
         List<TransportationCost> transportationCosts = new List<TransportationCost>();
+
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = "0123456789".IndexOf(e.Text) < 0;
+        }
+
         public void FillMatrix()
         {
-            /*TarifMatrix = new MatrixModel() { Columns = VendorsAndConsumptionsPage.CountConsumptions + 2, Rows = VendorsAndConsumptionsPage.CountVendors + 2 };
+            TarifMatrix = new MatrixModel() { Columns = VendorsAndConsumptionsPage.CountConsumptions + 2, Rows = VendorsAndConsumptionsPage.CountVendors + 2 };
             TarifsMatrixLV.DataContext = null;
             TarifsMatrixLV.ItemsSource = null;
-
+            TCPMessege tCPMessege;
             //Наконец Заполнение поставки
             int CurrentPositionCellInDatabase = -1, PositonInTransCost = 0;
             if (MainWorkOnTaskForm.DBTask.TransportationCost.Count > 0)
@@ -150,31 +161,72 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                         }
 
                     }
-                    Task task = DiplomBetaDBEntities.GetContext().Task.FirstOrDefault(p => p.Id == MainWorkOnTaskForm.DBTask.Id);
-                    task.CountColumn = TarifMatrix.Columns - 2;
-                    task.CountRow = TarifMatrix.Rows - 2;
+                    MainWorkOnTaskForm.DBTask.CountColumn = TarifMatrix.Columns - 2;
+                    MainWorkOnTaskForm.DBTask.CountRow = TarifMatrix.Rows - 2;
+                    tCPMessege = new TCPMessege(41, 8, new List<int> { MainWorkOnTaskForm.DBTask.Id, (int)MainWorkOnTaskForm.DBTask.CountRow, (int)MainWorkOnTaskForm.DBTask.CountColumn });
+                    if (!ClientTCP.SendMessege(tCPMessege))
+                    {
+                        MainForm.ReturnToAutorization();
+                        return;
+                    }
+                    Thread.Sleep(500);
                     if ((transportationCosts.Count+SaveTransportationCosts.Count) == (TarifMatrix.Rows - 2) * (TarifMatrix.Columns - 2))
                     {
-                        DiplomBetaDBEntities.GetContext().TransportationCost.RemoveRange(transportationCosts);
-                        DiplomBetaDBEntities.GetContext().SaveChanges();
+                        string TCListString = JsonConvert.SerializeObject(transportationCosts, Formatting.Indented, JsonSettings);
+                        tCPMessege = new TCPMessege(5, 8, new List<string>() { MainWorkOnTaskForm.DBTask.Id.ToString(), TCListString });
+                        if (!ClientTCP.SendMessege(tCPMessege))
+                        {
+                            MainForm.ReturnToAutorization();
+                            return;
+                        }
+                        Thread.Sleep(1000);
+
+
                         transportationCosts.AddRange(SaveTransportationCosts);
                         transportationCosts = transportationCosts.OrderBy(p => p.IdPosition).ToList();
-                        task.TransportationCost = transportationCosts;
-                        DiplomBetaDBEntities.GetContext().TransportationCost.AddRange(SaveTransportationCosts);
+
+                        TCListString = JsonConvert.SerializeObject(transportationCosts, Formatting.Indented, JsonSettings);
+                        tCPMessege = new TCPMessege(3, 8, new List<string>() { MainWorkOnTaskForm.DBTask.Id.ToString(), TCListString });
+                        tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                        if (tCPMessege == null)
+                        {
+                            MainForm.ReturnToAutorization();
+                            return;
+                        }
+                        transportationCosts = JsonConvert.DeserializeObject<List<TransportationCost>>(tCPMessege.Entity);
+                        MainWorkOnTaskForm.DBTask.TransportationCost = transportationCosts;
                     }
                     else
                     {
                         int n = 0;
-                        foreach(TransportationCost transportationCost in DeleteTransportationCosts)
+                        foreach (TransportationCost transportationCost in DeleteTransportationCosts)
                         {
                             transportationCost.IdPosition = n;
                             n++;
                         }
-                        DiplomBetaDBEntities.GetContext().TransportationCost.RemoveRange(transportationCosts);
-                        DiplomBetaDBEntities.GetContext().SaveChanges();
+
+                        string TCListString = JsonConvert.SerializeObject(transportationCosts, Formatting.Indented, JsonSettings);
+                        tCPMessege = new TCPMessege(5, 8, new List<string>() { MainWorkOnTaskForm.DBTask.Id.ToString(), TCListString });
+                        if (!ClientTCP.SendMessege(tCPMessege))
+                        {
+                            MainForm.ReturnToAutorization();
+                            return;
+                        }
+                        Thread.Sleep(1000);
+
+                        DeleteTransportationCosts.AddRange(SaveTransportationCosts);
                         DeleteTransportationCosts = DeleteTransportationCosts.OrderBy(p => p.IdPosition).ToList();
-                        task.TransportationCost = DeleteTransportationCosts;
-                        DiplomBetaDBEntities.GetContext().TransportationCost.AddRange(DeleteTransportationCosts);
+
+                        TCListString = JsonConvert.SerializeObject(DeleteTransportationCosts, Formatting.Indented, JsonSettings);
+                        tCPMessege = new TCPMessege(3, 8, new List<string>() { MainWorkOnTaskForm.DBTask.Id.ToString(), TCListString });
+                        tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                        if (tCPMessege == null)
+                        {
+                            MainForm.ReturnToAutorization();
+                            return;
+                        }
+                        transportationCosts = JsonConvert.DeserializeObject<List<TransportationCost>>(tCPMessege.Entity);
+                        MainWorkOnTaskForm.DBTask.TransportationCost = transportationCosts;
                     }
                 }
                 else
@@ -190,9 +242,6 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                         }
                     }
                 }
-                DiplomBetaDBEntities.GetContext().SaveChanges();
-                //transportationCosts = DiplomBetaDBEntities.GetContext().Task.FirstOrDefault(p => p.Id == MainWorkOnTaskForm.DBTask.Id).TransportationCost.ToList();
-
                 TarifsMatrixLV.DataContext = TarifMatrix;
                 TarifsMatrixLV.ItemsSource = TarifMatrix.Items;
             }
@@ -205,20 +254,33 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
                     {
                         CurrentPositionCellInDatabase++;
                         int position = TarifMatrix.Columns * i + j;
-                        transportationCosts.Add(new TransportationCost() { Value = 0, IdPosition = CurrentPositionCellInDatabase });
+                        transportationCosts.Add(new TransportationCost() { Value = 0, IdPosition = CurrentPositionCellInDatabase});
                         TarifMatrix.Items[position].Value = "0";
                     }
                 }
-                Task task = DiplomBetaDBEntities.GetContext().Task.FirstOrDefault(p => p.Id == MainWorkOnTaskForm.DBTask.Id);
-                task.CountColumn = VendorsAndConsumptionsPage.CountConsumptions;
-                task.CountRow = VendorsAndConsumptionsPage.CountVendors;
-                task.TransportationCost = transportationCosts;
-                DiplomBetaDBEntities.GetContext().TransportationCost.AddRange(transportationCosts);
+                MainWorkOnTaskForm.DBTask.CountColumn = TarifMatrix.Columns - 2;
+                MainWorkOnTaskForm.DBTask.CountRow = TarifMatrix.Rows - 2;
+                tCPMessege = new TCPMessege(41, 8, new List<int> { MainWorkOnTaskForm.DBTask.Id, (int)MainWorkOnTaskForm.DBTask.CountRow, (int)MainWorkOnTaskForm.DBTask.CountColumn });
+                if (!ClientTCP.SendMessege(tCPMessege))
+                {
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                Thread.Sleep(500);
+
+                
+
+                string TCListString = JsonConvert.SerializeObject(transportationCosts, Formatting.Indented, JsonSettings);
+                tCPMessege = new TCPMessege(3, 8, new List<string>() { MainWorkOnTaskForm.DBTask.Id.ToString(), TCListString });
+                tCPMessege = ClientTCP.SendMessegeAndGetAnswer(tCPMessege);
+                if (tCPMessege == null)
+                {
+                    MainForm.ReturnToAutorization();
+                    return;
+                }
+                transportationCosts = JsonConvert.DeserializeObject<List<TransportationCost>>(tCPMessege.Entity);
+                MainWorkOnTaskForm.DBTask.TransportationCost = transportationCosts;
             }
-            DiplomBetaDBEntities.GetContext().SaveChanges();
-
-
-
 
             TarifMatrix.Items[0].Value = "Наименование пунктов";
             TarifMatrix.Items[0].IsNotEnable = true;
@@ -256,7 +318,7 @@ namespace DiplomAdminEditonBeta.Views.PagesTask
             {
                 TarifMatrix.Items[TarifMatrix.Columns * j - 1].Value = VendorsNames[j - 2].ProductCount.ToString();
                 TarifMatrix.Items[TarifMatrix.Columns * j - 1].IsNotEnable = true;
-            }*/
+            }
         }
     }
 }
